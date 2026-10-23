@@ -107,7 +107,7 @@ smoke 默认8卡、每卡batch1、bf16、ZeRO2（把优化器状态和梯度分�
 
 训练输出 `metrics.jsonl`（每行一条JSON记录）、长表 `metrics.csv`（每行一个step的一个指标）及
 `gpu_metrics_rank_*.jsonl`，记录loss、梯度范数、吞吐、各卡峰值显存。
-不连接W&B。`train_panel/*` 是固定训练样本、固定随机噪声的拟合指标，
+上述短测不连接W&B。`train_panel/*` 是固定训练样本、固定随机噪声的拟合指标，
 不代表未见数据的泛化表现。
 
 ## GPU 验证状态
@@ -196,11 +196,13 @@ PID1仍为sleep、8张GPU无计算进程。代码与回执快照另存共享盘�
 每5000步保存一次、每次约108秒，20次保存增加约0.6小时，合计约77.14小时。
 该估算来自短测；加上固定训练样本评估、初始化和长期I/O波动，建议预留3.5–4天。
 
-以下为后续启动命令，**本次只生成并校验本地配置，没有同步到Pod或启动训练**。
-运行前需把新增配置同步到Pod代码目录 `/workspace/internw0-delta-yuming-20261023`。
+正式训练启用用户指定的W&B项目 `xymliu/cogact_baseline`，同时保留本地JSON/CSV。
+API key只通过进程环境注入，不能写入Git、配置或启动回执；
+通过 `WANDB_RUN_ID` 和 `WANDB_RESUME=allow` 将恢复训练关联到同一个W&B run。
+运行前需同步代码到Pod目录 `/workspace/internw0-delta-yuming-20261023`。
 
 ```bash
-RUN_ID=b200-joint-bs256-100k bash scripts/cogact_b200_run.sh train \
+WANDB_MODE=online RUN_ID=b200-joint-bs256-100k bash scripts/cogact_b200_run.sh train \
   task=cogact_bs256_100k
 ```
 

@@ -18,6 +18,13 @@ weight_decay: 0.01
 mixed_precision: bf16
 max_grad_norm: 1.0
 
+wandb:
+  enabled: true
+  workspace: xymliu
+  project: cogact_baseline
+  name: ${oc.env:RUN_ID,b200-joint-bs256-100k}
+  mode: online
+
 model:
   action_dit_config:
     training_time_rtc:

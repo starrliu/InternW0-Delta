@@ -18,7 +18,7 @@ if [[ ! -x .venv/bin/python ]]; then
 fi
 .venv/bin/python -m pip install uv
 .venv/bin/python -m uv pip install --python .venv/bin/python --torch-backend cu128 \
-  -e '.[train,cogact]' ninja setuptools
+  -e '.[train,cogact,logging]' ninja setuptools
 .venv/bin/python -m pip freeze > "$COGACT_PREP_ROOT/pip-freeze.txt"
 .venv/bin/python - <<'PY'
 import importlib.metadata as metadata

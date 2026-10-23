@@ -11,7 +11,7 @@ import numpy as np
 import torch
 import torch.distributed as dist
 from accelerate import Accelerator
-from omegaconf import DictConfig
+from omegaconf import DictConfig, OmegaConf
 from PIL import Image
 from torch.optim.lr_scheduler import ConstantLR, CosineAnnealingLR, LinearLR, SequentialLR
 from torch.utils.data import DataLoader
@@ -259,6 +259,7 @@ class WAMTrainer:
             group=None if self.cfg.wandb.group in (None, "null", "") else str(self.cfg.wandb.group),
             mode=self.cfg.wandb.mode,
             dir=self.output_dir,
+            config=OmegaConf.to_container(self.cfg, resolve=True),
         )
         logger.debug(
             "Initialized wandb run: workspace=%s project=%s name=%s",
