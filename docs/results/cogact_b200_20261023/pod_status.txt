@@ -1,0 +1,2 @@
+NAME                      NODE                  PHASE     RESTARTS
+liluo-agibot-2-server-0   slc01-cl02-hgx-0061   Running   0

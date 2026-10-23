@@ -1,0 +1,70 @@
+{
+  "phase": "bs32",
+  "steps": 48,
+  "global_batch": 256,
+  "per_gpu_batch": 32,
+  "finite_metrics": true,
+  "timing_excluded_first_steps": 16,
+  "timing_excluded_intervals_after_panel": [],
+  "steady_intervals": 32,
+  "mean_step_seconds": 2.755513623356819,
+  "median_step_seconds": 2.689595103263855,
+  "samples_per_second": 92.90463956702777,
+  "loss_comparison_window_steps": 24,
+  "loss": {
+    "train/loss": {
+      "first": 0.20685607753694057,
+      "last": 0.18559315986931324
+    },
+    "train/loss_action": {
+      "first": 0.03678780895036956,
+      "last": 0.02466909944390257
+    }
+  },
+  "panels": [],
+  "grad_norm_min": 0.17257662117481232,
+  "grad_norm_max": 0.9423000812530518,
+  "memory": [
+    {
+      "rank": 0,
+      "peak_allocated_gib": 95.67560577392578,
+      "peak_reserved_gib": 115.435546875
+    },
+    {
+      "rank": 1,
+      "peak_allocated_gib": 95.67536163330078,
+      "peak_reserved_gib": 115.43359375
+    },
+    {
+      "rank": 2,
+      "peak_allocated_gib": 95.67536163330078,
+      "peak_reserved_gib": 115.43359375
+    },
+    {
+      "rank": 3,
+      "peak_allocated_gib": 95.67707061767578,
+      "peak_reserved_gib": 115.43359375
+    },
+    {
+      "rank": 4,
+      "peak_allocated_gib": 95.67707061767578,
+      "peak_reserved_gib": 115.43359375
+    },
+    {
+      "rank": 5,
+      "peak_allocated_gib": 95.67737579345703,
+      "peak_reserved_gib": 115.43359375
+    },
+    {
+      "rank": 6,
+      "peak_allocated_gib": 95.67536163330078,
+      "peak_reserved_gib": 115.43359375
+    },
+    {
+      "rank": 7,
+      "peak_allocated_gib": 95.67707061767578,
+      "peak_reserved_gib": 115.43359375
+    }
+  ],
+  "ten_epoch_days_without_save_eval": 8.587698534274198
+}

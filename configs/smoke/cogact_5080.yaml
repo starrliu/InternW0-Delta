@@ -1,0 +1,26 @@
+# Local one-window feasibility check, not a production training recipe.
+paths:
+  checkpoints: ${oc.env:WAM_CHECKPOINT_ROOT,checkpoints}
+data:
+  train:
+    num_frames: 33
+    action_video_freq_ratio: 4
+    video_size: [384, 256]
+    processor:
+      action_output_dim: 80
+      proprio_output_dim: 80
+      num_output_cameras: 3
+model:
+  # Original public Wan encoders; the converted repository is unavailable.
+  redirect_common_files: false
+  skip_dit_load_from_pretrain: true
+  action_dit_pretrained_path: null
+  mot_checkpoint_mixed_attn: true
+  mot_checkpoint_layer_stride: 1
+  future_delta:
+    num_views: 1
+  understanding:
+    enabled: true
+    train_vlm: false
+    use_fused_causal_conv1d: false
+checkpoint: ${paths.checkpoints}/base/pretrain.pt

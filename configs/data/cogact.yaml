@@ -1,0 +1,21 @@
+train:
+  _target_: wam.datasets.cogact_dataset.CogACTDataset
+  prepared_dir: ${oc.env:COGACT_PREPARED_DATA,/data/yuming/internw0-delta/datasets/corrected12-all-20261023}
+  dataset_dirs:
+  - ${data.train.prepared_dir}
+  text_embedding_cache_dir: ${oc.env:COGACT_TEXT_CACHE,/data/yuming/internw0-delta/cache/text-corrected12}
+  pretrained_norm_stats: ${data.train.prepared_dir}/normalization.json
+  is_training_set: true
+  num_frames: 33
+  action_video_freq_ratio: 4
+  video_size: [384, 256]
+  memory_video_anchor_size: 1
+  memory_recent_frame_offset: 32
+  context_len: 128
+  processor:
+    action_output_dim: 80
+    proprio_output_dim: 80
+    num_output_cameras: 3
+# The user selected all recordings for training. Official trainer evaluations
+# therefore use training samples and do not estimate held-out generalization.
+val: null

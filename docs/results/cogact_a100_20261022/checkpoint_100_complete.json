@@ -1,0 +1,23 @@
+{
+  "step": 100,
+  "signature": "d14978a79a962e11df447b4aec3aae2bd29426fe98450f6d6b7a48fcb01c17e0",
+  "files": {
+    "rng_rank_02.pt": 14661,
+    "bf16_zero_pp_rank_6_mp_rank_00_optim_states.pt": 9317364017,
+    "rng_rank_04.pt": 14661,
+    "mp_rank_00_model_states.pt": 13440792293,
+    "bf16_zero_pp_rank_0_mp_rank_00_optim_states.pt": 9317343153,
+    "bf16_zero_pp_rank_4_mp_rank_00_optim_states.pt": 9317342833,
+    "rng_rank_05.pt": 14661,
+    "rng_rank_00.pt": 14661,
+    "rng_rank_03.pt": 14725,
+    "bf16_zero_pp_rank_7_mp_rank_00_optim_states.pt": 9317380401,
+    "rng_rank_07.pt": 14661,
+    "rng_rank_06.pt": 14725,
+    "rng_rank_01.pt": 14661,
+    "bf16_zero_pp_rank_1_mp_rank_00_optim_states.pt": 9317343025,
+    "bf16_zero_pp_rank_5_mp_rank_00_optim_states.pt": 9317343345,
+    "bf16_zero_pp_rank_3_mp_rank_00_optim_states.pt": 9317343409,
+    "bf16_zero_pp_rank_2_mp_rank_00_optim_states.pt": 9317343729
+  }
+}

@@ -1,0 +1,56 @@
+# yaml-language-server: $schema=file:///home/yuming/.paseo/worktrees/20fi8ih8/foolish-flamingo/.vscode/amlt-config.schema.json
+# ^ Update with: amlt schema add <file>  |  VS Code: Run Task > amlt
+# Amulet config file. Docs: https://amulet-docs.azurewebsites.net/config_file.html
+# Fill in all <placeholder> values before submitting.
+description: CogACT full-model eight-A100 training, capacity, memory and loss-trend probe
+
+target:
+  service: manifold  # run "amlt target list manifold" to see available targets
+  name: palisades33
+  workspace_name: eaiws  # the Singularity workspace to submit to
+
+# REQUIRED: Docker environment
+# Manifold jobs authenticate to Azure (storage, ACR) via a User-Assigned
+# Managed Identity, auto-detected from the workspace in most cases. Only set
+# _AZUREML_SINGULARITY_JOB_UAI in 'env' below if auto-detection is ambiguous
+# (multiple non-primary identities); run 'amlt run' to see the available list.
+environment:
+  registry: eaiacr.azurecr.io  # Workspace registry; identical mirrored image.
+  image: internw0-delta/probe-base:ml-common-py312-20261022-4481c5e4
+  setup: []  # Installation runs inside the foreground debug-hold wrapper.
+  env:
+    COGACT_ASSET_DIR: /mnt/default/internw0-delta/assets/cogact-probe-20261022-v1
+    PYTHONUNBUFFERED: "1"
+
+# REQUIRED: code to run. Set local_dir to your code directory — it must
+# exist and be non-empty. $CONFIG_DIR = directory of this file; the default
+# $CONFIG_DIR/src means: put your code in a 'src' folder next to this file.
+code:
+  local_dir: $CONFIG_DIR
+  ignore:
+    - .git
+    - .venv
+    - .cache
+    - checkpoints
+    - runs
+    - amlt
+    - .amltconfig
+    - .vscode
+    - "__pycache__"
+    - "*.log"
+
+# REQUIRED: Jobs to run. SKU examples: C1 (1 CPU), G1 (1 GPU), G4 (4 GPUs), G8-V100 (8 V100s)
+# Commands run from the uploaded code directory (code.local_dir).
+# 'command' is a shell script block (|): one line per step, e.g. python train.py --lr 0.01
+# Write outputs to $AMLT_OUTPUT_DIR for retrieval with 'amlt results'.
+# Use $$VAR to pass env vars literally ($VAR is interpolated at submission time).
+jobs:
+  - name: cogact-a100-8gpu-probe
+    sku: NDv4:G8
+    identity: managed
+    sla_tier: Premium
+    priority: medium
+    submit_args:
+      max_run_duration_seconds: 172800
+    command: |
+      bash scripts/cogact_a100_job.sh

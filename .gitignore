@@ -20,6 +20,9 @@ wandb/
 
 /third_party/
 .venv-*/
+.amltconfig
+/amlt/
+/.vscode/amlt-config.schema.json
 
 # Offline teacher features and externally downloaded models
 *.f16

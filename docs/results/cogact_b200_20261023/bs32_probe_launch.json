@@ -1,0 +1,1 @@
+{"pid": 185953, "run_id": "b200-bs32-48steps-20261023", "command": "bash scripts/cogact_b200_run.sh smoke batch_size=32 num_workers=4 max_steps=48 save_every=0 eval_every=0; rc=$?; echo \"$rc\" > /data/yuming/internw0-delta/preparation-20261023/bs32_probe.exitcode; exit \"$rc\"", "time_unix": 1792745005.2221603}

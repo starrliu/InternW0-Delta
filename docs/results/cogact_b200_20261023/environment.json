@@ -1,0 +1,9 @@
+{
+  "torch": "2.10.0+cu128",
+  "torchvision": "0.25.0+cu128",
+  "cuda_build": "12.8",
+  "transformers": "5.13.0",
+  "av": "16.0.1",
+  "deepspeed": "0.19.2",
+  "scope": "CPU imports only; GPU validation deferred until cards are available"
+}

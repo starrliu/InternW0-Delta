@@ -1,0 +1,175 @@
+output_dir: /data/yuming/internw0-delta/runs/cogact/b200-smoke-20261023
+video_latent_cache: 'off'
+video_latent_cache_fields:
+- current
+- memory_anchor
+- memory_recent
+batch_size: 1
+num_workers: 2
+lr_scheduler_type: cosine
+learning_rate: 5.0e-05
+vlm_learning_rate: 5.0e-05
+num_epochs: 10
+max_steps: 16
+log_every: 1
+save_every: 0
+max_weight_checkpoints: 5
+eval_every: 16
+eval_num_inference_steps: 10
+eval_loss_samples_per_rank: 1
+eval_max_videos: 0
+gradient_accumulation_steps: 1
+mixed_precision: bf16
+seed: 42
+max_grad_norm: 1.0
+weight_decay: 0.01
+resume: auto
+wandb:
+  enabled: false
+  workspace: null
+  project: InternW0-delta
+  name: train
+  group: null
+  mode: offline
+paths:
+  data: data
+  cache: /data/yuming/internw0-delta/cache
+  checkpoints: /data/yuming/internw0-delta/checkpoints
+  output: /data/yuming/internw0-delta/runs
+  robotwin: data/robotwin
+  robodojo: data/robodojo
+  libero: data/libero
+  ebench: data/ebench
+save_on_train_end: false
+save_training_state: true
+data:
+  train:
+    _target_: wam.datasets.cogact_dataset.CogACTDataset
+    prepared_dir: /data/yuming/internw0-delta/datasets/corrected12-all-20261023
+    dataset_dirs:
+    - /data/yuming/internw0-delta/datasets/corrected12-all-20261023
+    text_embedding_cache_dir: /data/yuming/internw0-delta/cache/text-corrected12
+    pretrained_norm_stats: /data/yuming/internw0-delta/datasets/corrected12-all-20261023/normalization.json
+    is_training_set: true
+    num_frames: 33
+    action_video_freq_ratio: 4
+    video_size:
+    - 384
+    - 256
+    memory_video_anchor_size: 1
+    memory_recent_frame_offset: 32
+    context_len: 128
+    processor:
+      action_output_dim: 80
+      proprio_output_dim: 80
+      num_output_cameras: 3
+  val: null
+model:
+  _target_: wam.model.factory.create_wam
+  model_id: Wan-AI/Wan2.2-TI2V-5B
+  tokenizer_model_id: Wan-AI/Wan2.1-T2V-1.3B
+  tokenizer_max_len: 128
+  load_text_encoder: false
+  proprio_dim: 80
+  redirect_common_files: false
+  mot_checkpoint_mixed_attn: true
+  mot_attention_backend: flex
+  mot_flex_block_size: 64
+  action_dit_pretrained_path: null
+  action_dit_use_interpolated_init: false
+  skip_dit_load_from_pretrain: true
+  video_dit_config:
+    has_image_input: false
+    patch_size:
+    - 1
+    - 2
+    - 2
+    in_dim: 48
+    hidden_dim: 3072
+    ffn_dim: 14336
+    freq_dim: 256
+    text_dim: 4096
+    out_dim: 48
+    num_heads: 24
+    attn_head_dim: 128
+    num_layers: 30
+    eps: 1.0e-06
+    seperated_timestep: true
+    require_clip_embedding: false
+    require_vae_embedding: false
+    fuse_vae_embedding_in_latents: true
+    use_gradient_checkpointing: true
+    video_attention_mask_mode: first_frame_causal
+    action_conditioned: false
+    action_dim: 80
+    action_group_causal_mask_mode: group_diagonal
+  action_dit_config:
+    training_time_rtc:
+      enabled: false
+      max_delay_steps: 16
+    action_dim: 80
+    hidden_dim: 1024
+    ffn_dim: 4096
+    num_heads: 24
+    attn_head_dim: 128
+    num_layers: 30
+    text_dim: 4096
+    freq_dim: 256
+    eps: 1.0e-06
+    use_gradient_checkpointing: true
+  video_scheduler:
+    train_shift: 6.0
+    infer_shift: 6.0
+    num_train_timesteps: 1000
+  action_scheduler:
+    train_shift: 1.0
+    infer_shift: 1.0
+    num_train_timesteps: 1000
+  loss:
+    lambda_video: 0.5
+    lambda_action: 1.0
+  future_delta:
+    enabled: true
+    num_tokens: null
+    video_size:
+    - 384
+    - 256
+    num_views: 1
+    num_frames: 33
+    action_video_freq_ratio: 4
+    loss_weight: 0.5
+    semantic_alignment:
+      enabled: true
+      student_layer: 8
+      teacher_layer: 20
+      loss_weight: 0.1
+      max_sigma: 0.5
+  understanding:
+    enabled: true
+    vlm_model_path: /data/yuming/internw0-delta/checkpoints/RynnBrain1.1-2B
+    trust_remote_code: true
+    train_vlm: false
+    vlm_gradient_checkpointing: false
+    vlm_batch_size: 0
+    max_pixels: 65536
+    prompt_cache_size: 256
+    precompute_metadata: true
+    save_vlm_weights: null
+    interval_chunks: 1
+    prompt: null
+    default_view_layout: auto
+    default_view_names: ''
+    use_fused_causal_conv1d: false
+  memory:
+    enabled: false
+    video:
+      enabled: true
+      num_anchor_frames: 1
+      num_recent_frames: 1
+      deduplicate_identical_anchor_batch: true
+  mot_checkpoint_layer_stride: 1
+prefetch_factor: 2
+pin_memory: true
+local_metrics: true
+eval_loss_only: true
+resume_strict: true

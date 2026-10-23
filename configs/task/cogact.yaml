@@ -1,0 +1,40 @@
+# @package _global_
+# Preparation/smoke defaults. Long-run batch and schedule still need selection
+# using B200 measurements; scripts explicitly require mode=train for a long run.
+defaults:
+- override /data: cogact
+- override /model: wam
+- _self_
+batch_size: 1
+num_workers: 2
+prefetch_factor: 2
+pin_memory: true
+lr_scheduler_type: cosine
+learning_rate: 5.0e-5
+num_epochs: 10
+max_steps: null
+gradient_accumulation_steps: 1
+weight_decay: 0.01
+mixed_precision: bf16
+max_grad_norm: 1.0
+log_every: 10
+local_metrics: true
+save_every: 1000
+eval_every: 1000
+eval_max_videos: 0
+eval_loss_only: true
+save_training_state: true
+resume: ${oc.env:WAM_PRETRAIN_CHECKPOINT,${paths.checkpoints}/base/pretrain.pt}
+resume_strict: true
+model:
+  redirect_common_files: false
+  skip_dit_load_from_pretrain: true
+  action_dit_pretrained_path: null
+  mot_checkpoint_mixed_attn: true
+  mot_checkpoint_layer_stride: 1
+  future_delta:
+    num_views: 1
+  understanding:
+    enabled: true
+    train_vlm: false
+    use_fused_causal_conv1d: false

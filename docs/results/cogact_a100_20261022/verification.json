@@ -1,0 +1,34 @@
+{
+  "training_steps": 200,
+  "fixed_evaluations": 9,
+  "passed_ranks": 8,
+  "resumed_from_step_by_rank": [
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100
+  ],
+  "parameters_updated_by_rank": [
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true
+  ],
+  "trainable_parameters": 6211551888,
+  "all_training_metrics_finite": true,
+  "gradient_norm_range": [
+    0.8858680129051208,
+    7.141686916351318
+  ],
+  "mean_update_seconds_excluding_steps_1_and_101": 1.3699146111806233,
+  "last_process_peak_allocated_gib": 31.578646659851074,
+  "last_process_peak_reserved_gib": 37.48046875
+}

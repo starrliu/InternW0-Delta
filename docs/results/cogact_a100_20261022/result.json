@@ -1,0 +1,48 @@
+{
+  "status": "passed",
+  "capacity": {
+    "max_tested_micro_batch": 3,
+    "max_tested_global_batch": 24,
+    "first_failing_micro_batch": 4,
+    "bounded_by_search_limit": false,
+    "train_micro_batch": 1,
+    "world_size": 8,
+    "zero_stage": 2,
+    "gradient_accumulation": 1,
+    "precision": "bf16"
+  },
+  "loss_trend": {
+    "loss_total": {
+      "initial": 1.3277269999186199,
+      "final": 0.4259808361530304,
+      "slope_per_step": -0.002932272096474965,
+      "decreased": true
+    },
+    "loss_action": {
+      "initial": 1.1247571309407551,
+      "final": 0.38370731472969055,
+      "slope_per_step": -0.002326205359564887,
+      "decreased": true
+    },
+    "loss_video": {
+      "initial": 0.09912976870934169,
+      "final": 0.024113197500507038,
+      "slope_per_step": -0.00028962976651059237,
+      "decreased": true
+    },
+    "loss_future_delta": {
+      "initial": 0.08645381033420563,
+      "final": 0.008615962229669094,
+      "slope_per_step": -0.00028785142178336766,
+      "decreased": true
+    },
+    "loss_semantic_future": {
+      "initial": 0.0173862986266613,
+      "final": 0.009544286876916885,
+      "slope_per_step": -2.858580400546388e-05,
+      "decreased": true
+    }
+  },
+  "resume_verified": true,
+  "scope": "real single-segment windows; full online model; no generalization claim"
+}

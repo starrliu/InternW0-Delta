@@ -1,0 +1,78 @@
+{
+  "dataset_root": "/data/liluo/msra_process",
+  "selection": "confirmed_corrected_12_all_training",
+  "datasets": [
+    {
+      "dataset_folder": "cogact_pickplace_combined_20260730_161821_split_500_240h",
+      "metadata_file": "episodic_dataset_20260730_235631.npy",
+      "weight": 1.0,
+      "action_folder_name": "actions_cmd_rfix_v1"
+    },
+    {
+      "dataset_folder": "cogact_pickplace_combined_20260730_214315_split_500_240h",
+      "metadata_file": "episodic_dataset_20260730_235736.npy",
+      "weight": 1.0,
+      "action_folder_name": "actions_cmd_rfix_v1"
+    },
+    {
+      "dataset_folder": "cogact_supermarket_combined_20260730_194207_split_500_240h",
+      "metadata_file": "episodic_dataset_20260731_002223.npy",
+      "weight": 1.0,
+      "action_folder_name": "actions_cmd_rfix_v1"
+    },
+    {
+      "dataset_folder": "cogact_supermarket_combined_20260730_201819_split_500_240h",
+      "metadata_file": "episodic_dataset_20260731_002304.npy",
+      "weight": 1.0,
+      "action_folder_name": "actions_cmd_rfix_v1"
+    },
+    {
+      "dataset_folder": "cogact_supermarket_combined_20260730_210432_split_500_240h",
+      "metadata_file": "episodic_dataset_20260731_002341.npy",
+      "weight": 1.0,
+      "action_folder_name": "actions_cmd_rfix_v1"
+    },
+    {
+      "dataset_folder": "cogact_pickplace_combined_20260810_101908_split_500_240h",
+      "metadata_file": "episodic_dataset_20260810_124420.npy",
+      "weight": 1.0,
+      "action_folder_name": "actions_cmd_rfix_v1"
+    },
+    {
+      "dataset_folder": "cogact_supermarket_combined_20260810_060306_split_500_240h",
+      "metadata_file": "episodic_dataset_20260810_140300.npy",
+      "weight": 1.0,
+      "action_folder_name": "actions_cmd_rfix_v1"
+    },
+    {
+      "dataset_folder": "cogact_pickplace_combined_20260814_074923_split_500_240h",
+      "metadata_file": "episodic_dataset_20260814_154915.npy",
+      "weight": 1.0,
+      "action_folder_name": "actions_cmd_rfix_v1"
+    },
+    {
+      "dataset_folder": "cogact_pickplace_combined_20260915_043204_split_500_240h",
+      "metadata_file": "episodic_dataset_20261001_005205.npy",
+      "weight": 1.0,
+      "action_folder_name": "actions_cmd_rfix_v1"
+    },
+    {
+      "dataset_folder": "cogact_pickplace_combined_20260919_132829_split_500_240h",
+      "metadata_file": "episodic_dataset_20261001_005209.npy",
+      "weight": 1.0,
+      "action_folder_name": "actions_cmd_rfix_v1"
+    },
+    {
+      "dataset_folder": "cogact_pickplace_combined_20260928_041835_split_500_240h",
+      "metadata_file": "episodic_dataset_20261001_005210.npy",
+      "weight": 1.0,
+      "action_folder_name": "actions_cmd_rfix_v1"
+    },
+    {
+      "dataset_folder": "cogact_pickplace_combined_20260930_142707_split_500_240h",
+      "metadata_file": "episodic_dataset_20261003_tea0930_sep24only_v1.npy",
+      "weight": 1.0,
+      "action_folder_name": "actions_cmd_rfix_v1"
+    }
+  ]
+}

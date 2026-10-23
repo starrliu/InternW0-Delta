@@ -1,0 +1,7 @@
+{
+  "exit_code": 0,
+  "transport": "azcopy",
+  "result_subdir": "probe-localio-20261022",
+  "verified_files": 37,
+  "verified_bytes": 175959462362
+}

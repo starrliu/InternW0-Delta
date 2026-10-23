@@ -1,4 +1,5 @@
 import gc
+import csv
 import json
 import os
 import re
@@ -16,7 +17,7 @@ from torch.optim.lr_scheduler import ConstantLR, CosineAnnealingLR, LinearLR, Se
 from torch.utils.data import DataLoader
 
 from .cache import CacheRuntimeBindings
-from .training.checkpoint import load_wam_checkpoint, save_wam_checkpoint
+from .training.checkpoint import load_wam_checkpoint, load_wam_checkpoint_strict, save_wam_checkpoint
 from .training.distributed import deepspeed_zero_stage
 from .training.metrics import gather_mean_scalars
 from .training.module import WAMTrainingModule
@@ -235,8 +236,11 @@ class WAMTrainer:
         self._init_wandb()
         self._resume_or_load_checkpoint()
 
-        val_size = len(self.val_dataset) if self.val_dataset is not None else len(self.train_dataset)
-        logger.info("Train/val dataset size: %d/%d", len(self.train_dataset), val_size)
+        if self.val_dataset is self.train_dataset:
+            logger.info("Train dataset size: %d; loss panel uses training samples (no held-out split).", len(self.train_dataset))
+        else:
+            val_size = len(self.val_dataset) if self.val_dataset is not None else 0
+            logger.info("Train/val dataset size: %d/%d", len(self.train_dataset), val_size)
 
     def _init_wandb(self):
         if not self.wandb_enabled or not self.accelerator.is_main_process:
@@ -264,6 +268,21 @@ class WAMTrainer:
         )
 
     def _wandb_log(self, payload: dict):
+        if self.val_dataset is self.train_dataset:
+            payload = {key.replace('eval/val_loss', 'train_panel/loss').replace('eval/', 'train_panel/'): value
+                       for key, value in payload.items()}
+        if self.cfg.get("local_metrics", False) and self.accelerator.is_main_process:
+            event = {"step": self.global_step, "epoch": self.epoch, "time_unix": time.time(), **payload}
+            with open(os.path.join(self.output_dir, "metrics.jsonl"), "a") as stream:
+                stream.write(json.dumps(event) + "\n")
+            csv_path = Path(self.output_dir) / "metrics.csv"
+            new_file = not csv_path.exists()
+            with csv_path.open("a", newline="") as stream:
+                writer = csv.writer(stream)
+                if new_file:
+                    writer.writerow(["step", "epoch", "time_unix", "metric", "value"])
+                writer.writerows([self.global_step, self.epoch, event["time_unix"], key, value]
+                                 for key, value in payload.items())
         if self.wandb_run is None:
             return
         self.wandb_run.log(payload, step=self.global_step)
@@ -503,7 +522,7 @@ class WAMTrainer:
         if not resume_path.exists():
             raise FileNotFoundError(f"Resume checkpoint not found: {resume}")
         logger.info("Loading weight checkpoint only: %s", resume_path)
-        load_wam_checkpoint(self._unwrap_core_model(), str(resume_path))
+        self._load_policy_weights(self._unwrap_core_model(), resume_path)
         logger.warning("Loaded .pt weights only; optimizer/scheduler/step were not restored.")
 
     def _load_weight_checkpoint_before_prepare(self, model) -> bool:
@@ -517,9 +536,16 @@ class WAMTrainer:
         if not resume_path.is_file():
             return False
         logger.info("Loading weight checkpoint before distributed parameter sharding: %s", resume_path)
-        load_wam_checkpoint(model, str(resume_path))
+        self._load_policy_weights(model, resume_path)
         logger.warning("Loaded .pt weights only; optimizer/scheduler/step were not restored.")
         return True
+
+    def _load_policy_weights(self, model, path):
+        if self.cfg.get("resume_strict", False):
+            coverage = load_wam_checkpoint_strict(model, str(path))
+            logger.info("Strict policy checkpoint coverage: %s", coverage)
+        else:
+            load_wam_checkpoint(model, str(path))
 
     def _unwrap_core_model(self):
         training_module = self.accelerator.unwrap_model(self.model)
@@ -984,6 +1010,11 @@ class WAMTrainer:
         val_loss = float(panel_mean[0].item())
         val_loss_video = float(panel_mean[1].item())
         val_loss_action = float(panel_mean[2].item())
+        if self.cfg.get("eval_loss_only", False):
+            if was_mot_training:
+                self._set_trainable_modules_mode()
+            return {"val_loss": val_loss, "loss_video": val_loss_video,
+                    "loss_action": val_loss_action}
         
         prompt = sample["prompt"][0]
         video0 = sample["video"][0]  # [C,T,H,W] or [N,C,T,H,W] in (-1, 1)
@@ -1464,6 +1495,8 @@ class WAMTrainer:
             self.train_dataset.set_epoch(self.epoch)
         data_iter = iter(self.train_loader)
         self.speed_history = [(self.global_step, time.perf_counter())]
+        if self.cfg.get("local_metrics", False) and self.accelerator.device.type == "cuda":
+            torch.cuda.reset_peak_memory_stats(self.accelerator.device)
 
         while self.global_step < self.max_steps:
             try:
@@ -1515,6 +1548,15 @@ class WAMTrainer:
                         global_loss = global_metrics.pop("loss")
                         global_grad_norm = global_metrics.pop("grad_norm")
                         global_loss_metrics = global_metrics
+                        if self.cfg.get("local_metrics", False) and self.accelerator.device.type == "cuda":
+                            device = self.accelerator.device
+                            memory = {"step": self.global_step, "rank": self.accelerator.process_index,
+                                      "peak_allocated_bytes": torch.cuda.max_memory_allocated(device),
+                                      "peak_reserved_bytes": torch.cuda.max_memory_reserved(device),
+                                      "allocated_bytes": torch.cuda.memory_allocated(device),
+                                      "reserved_bytes": torch.cuda.memory_reserved(device)}
+                            with open(os.path.join(self.output_dir, f"gpu_metrics_rank_{self.accelerator.process_index}.jsonl"), "a") as stream:
+                                stream.write(json.dumps(memory) + "\n")
 
                     current_lr = float(self.optimizer.param_groups[0]["lr"])
                     current_vlm_lr = next(
@@ -1577,7 +1619,8 @@ class WAMTrainer:
                         self._release_runtime_memory()
                         self.accelerator.wait_for_everyone()
                         if metrics is not None and self.accelerator.is_main_process:
-                            description = "[eval] step=%d val_loss=%.4f loss_action=%.4f loss_video=%.4f" % (
+                            panel_label = "train_panel" if self.val_dataset is self.train_dataset else "eval"
+                            description = ("[" + panel_label + "] step=%d loss=%.4f loss_action=%.4f loss_video=%.4f") % (
                                 self.global_step,
                                 metrics["val_loss"],
                                 metrics["loss_action"],

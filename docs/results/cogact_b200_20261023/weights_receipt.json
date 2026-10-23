@@ -1,0 +1,52 @@
+{
+  "status": "passed",
+  "destination_root": "/data/yuming/internw0-delta/checkpoints",
+  "files": [
+    {
+      "relative": "base/pretrain.pt",
+      "bytes": 12423420182,
+      "sha256": "a6bcf7a1eb2cf3d303e02faca05579cf77f4ac90863a15ff896b7e85ef884a08"
+    },
+    {
+      "relative": "Wan-AI/Wan2.2-TI2V-5B/Wan2.2_VAE.pth",
+      "bytes": 2818839170,
+      "sha256": "20eb789667fa5e60e7516bf509512f6cb61f01b0aa0695eadaea930c13892b36"
+    },
+    {
+      "relative": "RynnBrain1.1-2B/model.safetensors",
+      "bytes": 4426558864,
+      "sha256": "2819d84441c27c18c403c1302f60ff1ba2c9cfcdc989657bf6589e8cd11a7e6d"
+    },
+    {
+      "relative": "RynnBrain1.1-2B/generation_config.json",
+      "bytes": 148,
+      "sha256": "943f9e0a394325880a8a7e38c8d2c5bc40e2bb44a9bdc689f50fc26a2212edcc"
+    },
+    {
+      "relative": "RynnBrain1.1-2B/tokenizer.json",
+      "bytes": 19989343,
+      "sha256": "87a7830d63fcf43bf241c3c5242e96e62dd3fdc29224ca26fed8ea333db72de4"
+    },
+    {
+      "relative": "RynnBrain1.1-2B/processor_config.json",
+      "bytes": 1300,
+      "sha256": "14932921ca485d458a04dafd8069fbb0a4505622a48208d19ed247115801385b"
+    },
+    {
+      "relative": "RynnBrain1.1-2B/config.json",
+      "bytes": 2568,
+      "sha256": "3db6717dea7333fd0a4f543e378c5e68e761c8f2907384c537bd8bbee4d18b81"
+    },
+    {
+      "relative": "RynnBrain1.1-2B/tokenizer_config.json",
+      "bytes": 1139,
+      "sha256": "e98f1901ac6f0adff67b1d540bfa0c36ac1a0cf59eb72ed78146ef89aafa1182"
+    },
+    {
+      "relative": "RynnBrain1.1-2B/chat_template.jinja",
+      "bytes": 7755,
+      "sha256": "273d8e0e683b885071fb17e08d71e5f2a5ddfb5309756181681de4f5a1822d80"
+    }
+  ],
+  "completed_at_unix": 1792743494.846457
+}

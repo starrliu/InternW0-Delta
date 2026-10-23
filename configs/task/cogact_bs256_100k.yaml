@@ -1,0 +1,25 @@
+# @package _global_
+# 8 GPUs x 32 samples/GPU x 1 accumulation = global batch 256.
+# Explicit max_steps takes precedence over inherited num_epochs.
+# Trainer derives 5% warmup = 5,000 optimizer updates, then cosine decay.
+# Retains the verified CogACT absolute-joint targets and z-score statistics.
+defaults:
+  - cogact
+  - _self_
+
+batch_size: 32
+num_workers: 4
+gradient_accumulation_steps: 1
+max_steps: 100000
+save_every: 5000
+learning_rate: 5.0e-5
+lr_scheduler_type: cosine
+weight_decay: 0.01
+mixed_precision: bf16
+max_grad_norm: 1.0
+
+model:
+  action_dit_config:
+    training_time_rtc:
+      enabled: false
+      max_delay_steps: 16  # Inactive while RTC is disabled.

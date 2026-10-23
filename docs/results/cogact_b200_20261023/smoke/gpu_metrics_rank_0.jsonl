@@ -1,0 +1,16 @@
+{"step": 1, "rank": 0, "peak_allocated_bytes": 33838603264, "peak_reserved_bytes": 48129638400, "allocated_bytes": 27626838528, "reserved_bytes": 48129638400}
+{"step": 2, "rank": 0, "peak_allocated_bytes": 33854509056, "peak_reserved_bytes": 48131735552, "allocated_bytes": 27627887104, "reserved_bytes": 48131735552}
+{"step": 3, "rank": 0, "peak_allocated_bytes": 33854509056, "peak_reserved_bytes": 48131735552, "allocated_bytes": 27626838528, "reserved_bytes": 48131735552}
+{"step": 4, "rank": 0, "peak_allocated_bytes": 33854509056, "peak_reserved_bytes": 48131735552, "allocated_bytes": 27627887104, "reserved_bytes": 48131735552}
+{"step": 5, "rank": 0, "peak_allocated_bytes": 33854509056, "peak_reserved_bytes": 48131735552, "allocated_bytes": 27626838528, "reserved_bytes": 48131735552}
+{"step": 6, "rank": 0, "peak_allocated_bytes": 33854509056, "peak_reserved_bytes": 48131735552, "allocated_bytes": 27627887104, "reserved_bytes": 48131735552}
+{"step": 7, "rank": 0, "peak_allocated_bytes": 33854509056, "peak_reserved_bytes": 48131735552, "allocated_bytes": 27626838528, "reserved_bytes": 48131735552}
+{"step": 8, "rank": 0, "peak_allocated_bytes": 33854509056, "peak_reserved_bytes": 48131735552, "allocated_bytes": 27627887104, "reserved_bytes": 48131735552}
+{"step": 9, "rank": 0, "peak_allocated_bytes": 33853526016, "peak_reserved_bytes": 49683628032, "allocated_bytes": 27626839040, "reserved_bytes": 49683628032}
+{"step": 10, "rank": 0, "peak_allocated_bytes": 33854509568, "peak_reserved_bytes": 49685725184, "allocated_bytes": 27627887616, "reserved_bytes": 49685725184}
+{"step": 11, "rank": 0, "peak_allocated_bytes": 33854509568, "peak_reserved_bytes": 49685725184, "allocated_bytes": 27626839040, "reserved_bytes": 49685725184}
+{"step": 12, "rank": 0, "peak_allocated_bytes": 33854509568, "peak_reserved_bytes": 49685725184, "allocated_bytes": 27627887616, "reserved_bytes": 49685725184}
+{"step": 13, "rank": 0, "peak_allocated_bytes": 33854509568, "peak_reserved_bytes": 49685725184, "allocated_bytes": 27626839040, "reserved_bytes": 49685725184}
+{"step": 14, "rank": 0, "peak_allocated_bytes": 33854509568, "peak_reserved_bytes": 49685725184, "allocated_bytes": 27627887616, "reserved_bytes": 49685725184}
+{"step": 15, "rank": 0, "peak_allocated_bytes": 33854509568, "peak_reserved_bytes": 49685725184, "allocated_bytes": 27626839040, "reserved_bytes": 49685725184}
+{"step": 16, "rank": 0, "peak_allocated_bytes": 33854509568, "peak_reserved_bytes": 49685725184, "allocated_bytes": 27627887616, "reserved_bytes": 49685725184}

@@ -1,0 +1,108 @@
+{
+  "phase": "bs16",
+  "steps": 128,
+  "global_batch": 128,
+  "per_gpu_batch": 16,
+  "finite_metrics": true,
+  "timing_excluded_first_steps": 16,
+  "timing_excluded_intervals_after_panel": [
+    32,
+    64,
+    96,
+    128
+  ],
+  "steady_intervals": 109,
+  "mean_step_seconds": 1.8596668352774524,
+  "median_step_seconds": 1.5067830085754395,
+  "samples_per_second": 68.82953310338681,
+  "loss_comparison_window_steps": 32,
+  "loss": {
+    "train/loss": {
+      "first": 0.21141992835327983,
+      "last": 0.17472259746864438
+    },
+    "train/loss_action": {
+      "first": 0.040175783389713615,
+      "last": 0.021425260580144823
+    }
+  },
+  "panels": [
+    {
+      "step": 32,
+      "epoch": 0,
+      "time_unix": 1792744828.9597793,
+      "train_panel/loss": 0.10584685206413269,
+      "train_panel/loss_action": 0.014919748529791832,
+      "train_panel/loss_video": 0.033114925026893616
+    },
+    {
+      "step": 64,
+      "epoch": 0,
+      "time_unix": 1792744882.6996014,
+      "train_panel/loss": 0.10603301227092743,
+      "train_panel/loss_action": 0.019869070500135422,
+      "train_panel/loss_video": 0.030956421047449112
+    },
+    {
+      "step": 96,
+      "epoch": 0,
+      "time_unix": 1792744938.730735,
+      "train_panel/loss": 0.10032719373703003,
+      "train_panel/loss_action": 0.016870025545358658,
+      "train_panel/loss_video": 0.029713626950979233
+    },
+    {
+      "step": 128,
+      "epoch": 0,
+      "time_unix": 1792744994.8162522,
+      "train_panel/loss": 0.09781201183795929,
+      "train_panel/loss_action": 0.014634858816862106,
+      "train_panel/loss_video": 0.02962275594472885
+    }
+  ],
+  "grad_norm_min": 0.19117122888565063,
+  "grad_norm_max": 1.1833250522613525,
+  "memory": [
+    {
+      "rank": 0,
+      "peak_allocated_gib": 60.80888223648071,
+      "peak_reserved_gib": 75.3671875
+    },
+    {
+      "rank": 1,
+      "peak_allocated_gib": 60.80717420578003,
+      "peak_reserved_gib": 75.3671875
+    },
+    {
+      "rank": 2,
+      "peak_allocated_gib": 60.80894327163696,
+      "peak_reserved_gib": 75.3671875
+    },
+    {
+      "rank": 3,
+      "peak_allocated_gib": 60.80894327163696,
+      "peak_reserved_gib": 75.3671875
+    },
+    {
+      "rank": 4,
+      "peak_allocated_gib": 60.80882120132446,
+      "peak_reserved_gib": 75.3671875
+    },
+    {
+      "rank": 5,
+      "peak_allocated_gib": 60.80882120132446,
+      "peak_reserved_gib": 75.3671875
+    },
+    {
+      "rank": 6,
+      "peak_allocated_gib": 60.80888223648071,
+      "peak_reserved_gib": 75.3671875
+    },
+    {
+      "rank": 7,
+      "peak_allocated_gib": 60.80882120132446,
+      "peak_reserved_gib": 75.3671875
+    }
+  ],
+  "ten_epoch_days_without_save_eval": 11.59149279479536
+}

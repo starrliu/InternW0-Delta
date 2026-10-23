@@ -41,6 +41,7 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
+cogact = ["lmdb==3.0.0", "opencv-python-headless==4.10.0.84"]
 distillation = ["addict==2.4.0", "evo==1.34.1", "opencv-python-headless==4.10.0.84"]
 train = ["deepspeed==0.19.2"]
 logging = ["wandb==0.23.1"]

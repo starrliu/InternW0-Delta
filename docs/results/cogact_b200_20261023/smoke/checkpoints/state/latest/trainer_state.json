@@ -1,0 +1,7 @@
+{
+  "global_step": 8,
+  "epoch": 0,
+  "batch_in_epoch": 8,
+  "step_tag": "step_000008",
+  "weights_path": "/data/yuming/internw0-delta/runs/cogact/b200-smoke-20261023/checkpoints/weights/slot_0.pt"
+}

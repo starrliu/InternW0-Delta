@@ -1,0 +1,47 @@
+{
+  "launcher_pid": 99473,
+  "command": "/opt/cogact-mot-t214-py311/bin/python -m torch.distributed.run --nnodes 1 --nproc-per-node 8 --standalone cogact/training/train.py --config-path=../../configs/workspace/liluo --config-name=cogact_v5_ft_agibot_tea4_mot task_name=exp_20261022_nontea_v5_tea4_sep24only_mot_ft_pretrain200k_abs_chunk30_nohistory_minact10_indexedmp4_fa4_t214cu13_localstage_bs512_100k_noprogress_nolora_lang data_mount_dir=/data/liluo/msra_process output_root=/data/liluo/checkpoints resume=false trajectory_chunk_size=30 action_chunk_size=51 num_workers=8 train_dataset.local_stage.enabled=true train_dataset.local_stage.root=/root/_stage train_dataset.local_stage.require=true pretrain_model_load_path='/data/yalia/checkpoints/pt_1015_three_pt_v3_robot_70_tbs_2048_repeat_16/checkpoints/epoch=22-step=200000.ckpt/weights_ema.pt' ",
+  "output_dir": "/data/liluo/checkpoints/exp_20261022_nontea_v5_tea4_sep24only_mot_ft_pretrain200k_abs_chunk30_nohistory_minact10_indexedmp4_fa4_t214cu13_localstage_bs512_100k_noprogress_nolora_lang",
+  "latest_checkpoint": "/data/liluo/checkpoints/exp_20261022_nontea_v5_tea4_sep24only_mot_ft_pretrain200k_abs_chunk30_nohistory_minact10_indexedmp4_fa4_t214cu13_localstage_bs512_100k_noprogress_nolora_lang/checkpoints/epoch=3-step=50000.ckpt",
+  "checkpoint_files": [
+    {
+      "path": "action_feature.json",
+      "bytes": 7561
+    },
+    {
+      "path": "config.yaml",
+      "bytes": 16538
+    },
+    {
+      "path": "meta.json",
+      "bytes": 34
+    },
+    {
+      "path": "mot_finetune.json",
+      "bytes": 48169
+    },
+    {
+      "path": "norm_config.json",
+      "bytes": 52888
+    },
+    {
+      "path": "optimizer.pt",
+      "bytes": 14972142356
+    },
+    {
+      "path": "param_groups.json",
+      "bytes": 47466
+    },
+    {
+      "path": "weights.pt",
+      "bytes": 17013053636
+    },
+    {
+      "path": "weights_ema.pt",
+      "bytes": 17013059400
+    }
+  ],
+  "signal": "SIGTERM",
+  "time_unix": 1792743984.4500537,
+  "pid1_preserved": true
+}

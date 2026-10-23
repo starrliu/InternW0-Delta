@@ -1,0 +1,116 @@
+{
+  "status": "prepared",
+  "signature": "2320fa375ded473df404986bcb388b55d50f6e9bd9e5ce5567dce19599a95e6f",
+  "dataset_root": "/data/liluo/msra_process",
+  "validation_fraction": 0.0,
+  "seed": 42,
+  "horizon": 32,
+  "sample_stride": 1,
+  "terminal_repeat_valid_steps": 0,
+  "counts": {
+    "train": 6893243
+  },
+  "datasets": [
+    {
+      "dataset_folder": "cogact_pickplace_combined_20260730_161821_split_500_240h",
+      "metadata_file": "episodic_dataset_20260730_235631.npy",
+      "episodes": 1737,
+      "recordings": 46,
+      "train_samples": 341224,
+      "validation_samples": 0
+    },
+    {
+      "dataset_folder": "cogact_pickplace_combined_20260730_214315_split_500_240h",
+      "metadata_file": "episodic_dataset_20260730_235736.npy",
+      "episodes": 1986,
+      "recordings": 18,
+      "train_samples": 381897,
+      "validation_samples": 0
+    },
+    {
+      "dataset_folder": "cogact_supermarket_combined_20260730_194207_split_500_240h",
+      "metadata_file": "episodic_dataset_20260731_002223.npy",
+      "episodes": 1983,
+      "recordings": 24,
+      "train_samples": 230368,
+      "validation_samples": 0
+    },
+    {
+      "dataset_folder": "cogact_supermarket_combined_20260730_201819_split_500_240h",
+      "metadata_file": "episodic_dataset_20260731_002304.npy",
+      "episodes": 2202,
+      "recordings": 19,
+      "train_samples": 281460,
+      "validation_samples": 0
+    },
+    {
+      "dataset_folder": "cogact_supermarket_combined_20260730_210432_split_500_240h",
+      "metadata_file": "episodic_dataset_20260731_002341.npy",
+      "episodes": 769,
+      "recordings": 9,
+      "train_samples": 125051,
+      "validation_samples": 0
+    },
+    {
+      "dataset_folder": "cogact_pickplace_combined_20260810_101908_split_500_240h",
+      "metadata_file": "episodic_dataset_20260810_124420.npy",
+      "episodes": 1527,
+      "recordings": 16,
+      "train_samples": 269335,
+      "validation_samples": 0
+    },
+    {
+      "dataset_folder": "cogact_supermarket_combined_20260810_060306_split_500_240h",
+      "metadata_file": "episodic_dataset_20260810_140300.npy",
+      "episodes": 1982,
+      "recordings": 13,
+      "train_samples": 273741,
+      "validation_samples": 0
+    },
+    {
+      "dataset_folder": "cogact_pickplace_combined_20260814_074923_split_500_240h",
+      "metadata_file": "episodic_dataset_20260814_154915.npy",
+      "episodes": 2531,
+      "recordings": 24,
+      "train_samples": 425449,
+      "validation_samples": 0
+    },
+    {
+      "dataset_folder": "cogact_pickplace_combined_20260915_043204_split_500_240h",
+      "metadata_file": "episodic_dataset_20261001_005205.npy",
+      "episodes": 10170,
+      "recordings": 142,
+      "train_samples": 3042088,
+      "validation_samples": 0
+    },
+    {
+      "dataset_folder": "cogact_pickplace_combined_20260919_132829_split_500_240h",
+      "metadata_file": "episodic_dataset_20261001_005209.npy",
+      "episodes": 2505,
+      "recordings": 29,
+      "train_samples": 702951,
+      "validation_samples": 0
+    },
+    {
+      "dataset_folder": "cogact_pickplace_combined_20260928_041835_split_500_240h",
+      "metadata_file": "episodic_dataset_20261001_005210.npy",
+      "episodes": 2553,
+      "recordings": 33,
+      "train_samples": 668855,
+      "validation_samples": 0
+    },
+    {
+      "dataset_folder": "cogact_pickplace_combined_20260930_142707_split_500_240h",
+      "metadata_file": "episodic_dataset_20261003_tea0930_sep24only_v1.npy",
+      "episodes": 680,
+      "recordings": 7,
+      "train_samples": 150824,
+      "validation_samples": 0
+    }
+  ],
+  "cross_source_overlap_count": 0,
+  "cross_source_overlaps": [],
+  "video_check": "inventory coverage only; decode/read benchmark pending",
+  "command_vs_measured_joint_max_abs": 0.0,
+  "elapsed_seconds": 23.412599585950375
+}

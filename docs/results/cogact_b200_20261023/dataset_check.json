@@ -1,0 +1,225 @@
+{
+  "status": "passed",
+  "signature": "2320fa375ded473df404986bcb388b55d50f6e9bd9e5ce5567dce19599a95e6f",
+  "samples_per_epoch": 6893243,
+  "episodes": 30625,
+  "text_context_checked": false,
+  "checks": [
+    {
+      "source": 0,
+      "kind": "cross_500",
+      "index": 349,
+      "seconds": 0.22596164233982563
+    },
+    {
+      "source": 0,
+      "kind": "start",
+      "index": 0,
+      "seconds": 0.12677124701440334
+    },
+    {
+      "source": 0,
+      "kind": "tail",
+      "index": 303,
+      "seconds": 0.09296909347176552
+    },
+    {
+      "source": 1,
+      "kind": "cross_500",
+      "index": 341442,
+      "seconds": 0.2087736576795578
+    },
+    {
+      "source": 1,
+      "kind": "start",
+      "index": 341224,
+      "seconds": 0.10334373079240322
+    },
+    {
+      "source": 1,
+      "kind": "tail",
+      "index": 341427,
+      "seconds": 0.08214535564184189
+    },
+    {
+      "source": 2,
+      "kind": "cross_500",
+      "index": 723539,
+      "seconds": 0.21255331300199032
+    },
+    {
+      "source": 2,
+      "kind": "start",
+      "index": 723121,
+      "seconds": 0.1016134824603796
+    },
+    {
+      "source": 2,
+      "kind": "tail",
+      "index": 723432,
+      "seconds": 0.09553167596459389
+    },
+    {
+      "source": 3,
+      "kind": "cross_500",
+      "index": 953661,
+      "seconds": 0.2122597899287939
+    },
+    {
+      "source": 3,
+      "kind": "start",
+      "index": 953489,
+      "seconds": 0.10844737105071545
+    },
+    {
+      "source": 3,
+      "kind": "tail",
+      "index": 953869,
+      "seconds": 0.10905037075281143
+    },
+    {
+      "source": 4,
+      "kind": "cross_500",
+      "index": 1235647,
+      "seconds": 0.2232197243720293
+    },
+    {
+      "source": 4,
+      "kind": "start",
+      "index": 1234949,
+      "seconds": 0.13275369442999363
+    },
+    {
+      "source": 4,
+      "kind": "tail",
+      "index": 1235171,
+      "seconds": 0.08521468937397003
+    },
+    {
+      "source": 5,
+      "kind": "cross_500",
+      "index": 1360199,
+      "seconds": 0.24442864023149014
+    },
+    {
+      "source": 5,
+      "kind": "start",
+      "index": 1360000,
+      "seconds": 0.11113682575523853
+    },
+    {
+      "source": 5,
+      "kind": "tail",
+      "index": 1360182,
+      "seconds": 0.08966519497334957
+    },
+    {
+      "source": 6,
+      "kind": "cross_500",
+      "index": 1629653,
+      "seconds": 0.2135044690221548
+    },
+    {
+      "source": 6,
+      "kind": "start",
+      "index": 1629335,
+      "seconds": 0.11686788499355316
+    },
+    {
+      "source": 6,
+      "kind": "tail",
+      "index": 1629516,
+      "seconds": 0.09234278835356236
+    },
+    {
+      "source": 7,
+      "kind": "cross_500",
+      "index": 1903341,
+      "seconds": 0.20256169512867928
+    },
+    {
+      "source": 7,
+      "kind": "start",
+      "index": 1903076,
+      "seconds": 0.10829235799610615
+    },
+    {
+      "source": 7,
+      "kind": "tail",
+      "index": 1903267,
+      "seconds": 0.08352438360452652
+    },
+    {
+      "source": 8,
+      "kind": "cross_500",
+      "index": 2328929,
+      "seconds": 0.2360826823860407
+    },
+    {
+      "source": 8,
+      "kind": "start",
+      "index": 2328525,
+      "seconds": 0.10649782232940197
+    },
+    {
+      "source": 8,
+      "kind": "tail",
+      "index": 2328991,
+      "seconds": 0.12729870714247227
+    },
+    {
+      "source": 9,
+      "kind": "cross_500",
+      "index": 5370976,
+      "seconds": 0.2413617316633463
+    },
+    {
+      "source": 9,
+      "kind": "start",
+      "index": 5370613,
+      "seconds": 0.12275452725589275
+    },
+    {
+      "source": 9,
+      "kind": "tail",
+      "index": 5370927,
+      "seconds": 0.08570566959679127
+    },
+    {
+      "source": 10,
+      "kind": "cross_500",
+      "index": 6073666,
+      "seconds": 0.21919314190745354
+    },
+    {
+      "source": 10,
+      "kind": "start",
+      "index": 6073564,
+      "seconds": 0.11915469914674759
+    },
+    {
+      "source": 10,
+      "kind": "tail",
+      "index": 6073751,
+      "seconds": 0.11915717460215092
+    },
+    {
+      "source": 11,
+      "kind": "cross_500",
+      "index": 6742459,
+      "seconds": 0.2189007457345724
+    },
+    {
+      "source": 11,
+      "kind": "start",
+      "index": 6742419,
+      "seconds": 0.11037898994982243
+    },
+    {
+      "source": 11,
+      "kind": "tail",
+      "index": 6742653,
+      "seconds": 0.11642194539308548
+    }
+  ]
+}

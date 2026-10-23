@@ -154,3 +154,40 @@ def load_wam_checkpoint(model, path):
         logger.info("Loaded understanding adapter checkpoint.")
 
     return payload
+
+
+def load_wam_checkpoint_strict(model, path):
+    """Load the complete policy for validation, rejecting partial initialization.
+
+    Frozen VAE/VLM backbones are loaded separately by the model factory. This
+    deliberately does not relax or change the normal fine-tuning loader.
+    """
+    payload = torch.load(path, map_location="cpu", weights_only=True, mmap=True)
+    modules = {
+        name: getattr(model, name, None)
+        for name in ("mot", "proprio_encoder", "action_proprio_encoder", "track_bridge")
+    }
+    # Check every module before mutating any weights.
+    coverage = {}
+    for name, module in modules.items():
+        if module is None:
+            continue
+        expected, actual = module.state_dict(), payload.get(name)
+        if not isinstance(actual, dict) or set(expected) != set(actual):
+            raise ValueError(f"Incomplete or unexpected checkpoint keys for {name}")
+        wrong = [key for key in expected if not torch.is_tensor(actual[key])
+                 or expected[key].shape != actual[key].shape]
+        if wrong:
+            raise ValueError(f"Incompatible {name} checkpoint tensors: {wrong[:8]}")
+        coverage[name] = len(expected)
+    understanding = getattr(model, "understanding", None)
+    if understanding is not None:
+        actual = payload.get("understanding")
+        if not isinstance(actual, dict) or set(actual) != set(understanding.adapter_state_dict()):
+            raise ValueError("Incomplete understanding adapter checkpoint")
+    for name, module in modules.items():
+        if module is not None:
+            module.load_state_dict(payload[name], strict=True)
+    if understanding is not None:
+        understanding.load_adapter_state_dict(payload["understanding"], strict=True)
+    return coverage
