@@ -1,7 +1,8 @@
 # CogACT → InternW0-Delta：B200 准备与验证
 
 日期：2026-10-23。目标是在已分配的 8×B200 Pod 内直接运行脚本，验证
-InternW0-Delta-Base 的 CogACT 关节动作微调接口。正式长训配置尚未确认。
+InternW0-Delta-Base 的 CogACT 关节动作微调接口。正式训练已按文末的
+全局batch256、10万步方案启动，准备与短测记录保留如下。
 
 ## 已确认的边界
 
@@ -103,7 +104,8 @@ bash scripts/cogact_b200_run.sh smoke
 脚本使用文件锁防重复启动，发现 GPU 进程就退出，不自动停止其他任务。
 smoke 默认8卡、每卡batch1、bf16、ZeRO2（把优化器状态和梯度分摊到8卡）、
 梯度检查点（重算中间结果以节省显存）开启、全量训练参数更新；8步后计算固定训练样本loss并保存状态。
-`train` 模式的10epoch等值只是候选配置，正式启动前仍需确认。
+`train` 模式的默认10epoch等值是早期候选配置；正式训练需显式传入
+`task=cogact_bs256_100k`，采用文末已确认的10万步计划。
 
 训练输出 `metrics.jsonl`（每行一条JSON记录）、长表 `metrics.csv`（每行一个step的一个指标）及
 `gpu_metrics_rank_*.jsonl`，记录loss、梯度范数、吞吐、各卡峰值显存。
@@ -176,7 +178,7 @@ action loss为 **0.04018 → 0.02143（下降46.7%）**。
   本次权重＋训练状态共111.06GB。长训前要保留与检查点匹配的
   `normalization.json`、数据manifest和配置。
 
-本次所有短测已结束，正式长训未启动。最终检查显示Pod为Running、重启次数0、
+短测结束时，正式长训尚未启动。当时检查显示Pod为Running、重启次数0、
 PID1仍为sleep、8张GPU无计算进程。代码与回执快照另存共享盘准备目录，
 不依赖当前Pod的临时文件系统。
 
@@ -199,7 +201,7 @@ PID1仍为sleep、8张GPU无计算进程。代码与回执快照另存共享盘�
 正式训练启用用户指定的W&B项目 `xymliu/cogact_baseline`，同时保留本地JSON/CSV。
 API key只通过进程环境注入，不能写入Git、配置或启动回执；
 通过 `WANDB_RUN_ID` 和 `WANDB_RESUME=allow` 将恢复训练关联到同一个W&B run。
-运行前需同步代码到Pod目录 `/workspace/internw0-delta-yuming-20261023`。
+代码已同步到Pod目录 `/workspace/internw0-delta-yuming-20261023`。
 
 ```bash
 WANDB_MODE=online RUN_ID=b200-joint-bs256-100k bash scripts/cogact_b200_run.sh train \
@@ -209,3 +211,30 @@ WANDB_MODE=online RUN_ID=b200-joint-bs256-100k bash scripts/cogact_b200_run.sh t
 输出为 `/data/yuming/internw0-delta/runs/cogact/b200-joint-bs256-100k`。
 默认从Base权重初始化；恢复本次中断训练时用同一输出目录并加 `resume=auto`，
 保持10万步的调度计划。之前的17万步RTC建议已被本方案替代。
+
+## 正式训练启动记录
+
+已于2026-10-23 17:27（北京时间）在现有Pod内直接启动，训练代码提交为
+`8e3994138af91c63976f86411202428b283a335d`，已推送到
+`starrliu/InternW0-Delta` 的 `cogact_baseline` 分支。
+独立后台监督进程PID为192733；正常完成或失败后会写入退出码，不依赖kubectl连接存活。
+
+- Run：`b200-joint-bs256-100k-20261023`。
+- 结果目录：`/data/yuming/internw0-delta/runs/cogact/b200-joint-bs256-100k-20261023`。
+- W&B：https://wandb.ai/xymliu/cogact_baseline/runs/cgb200-20261023-100k 。
+- SDK为wandb0.23.1，API endpoint为`https://api.wandb.ai`；用户提供的key仅由进程环境注入。
+- 恢复关联：`WANDB_RUN_ID=cgb200-20261023-100k`、`WANDB_RESUME=allow`，
+  配合同一结果目录和`resume=auto`；保持batch、总步数及调度计划一致。
+
+17:31检查时，8个rank均已记录到第50步，所有已记录loss与梯度范数均有限，
+第50步总loss为0.24430、action loss为0.06425、梯度范数为0.68953。
+仍处于5000步学习率预热阶段，尚不能据此判断长期收敛。
+排除前10步后，平均2.797秒/步、91.52窗口/秒；PyTorch各卡峰值已分配
+最大95.677GiB、保留最大115.436GiB，nvidia-smi约118.4GiB/卡。
+W&B API已确认run为running，并读到第10/20/30步的云端训练指标；
+本地JSON/CSV继续保存。首个正式检查点将在第5000步生成。
+
+远端`launch.json`、`startup_health.json`、`status.md`记录本次启动和检查，
+`train.log`保存训练日志；`train.exitcode`和`completion.json`仅在进程结束后生成。
+本地证据见`docs/results/cogact_b200_20261023/longrun_startup_health.json`。
+未修改原始数据或Pod生命周期，检查时PID1仍为sleep。

@@ -1,0 +1,145 @@
+{
+  "checked_at_utc": "2026-10-23T09:31:41Z",
+  "run_name": "b200-joint-bs256-100k-20261023",
+  "output_dir": "/data/yuming/internw0-delta/runs/cogact/b200-joint-bs256-100k-20261023",
+  "source_commit": "8e3994138af91c63976f86411202428b283a335d",
+  "supervisor_pid": 192733,
+  "pid1": "sleep",
+  "last_logged_step": 50,
+  "target_steps": 100000,
+  "global_batch": 256,
+  "save_every": 5000,
+  "rtc_enabled": false,
+  "all_recorded_values_finite": true,
+  "seconds_per_step_excluding_first_10": 2.797181469202042,
+  "samples_per_second": 91.52069782338066,
+  "latest_metrics": {
+    "step": 50,
+    "epoch": 0,
+    "time_unix": 1792747890.8289495,
+    "train/loss": 0.24429655075073242,
+    "train/grad_norm": 0.6895301938056946,
+    "train/lr": 5.099e-7,
+    "performance/steps_per_sec": 0.35492614843128756,
+    "performance/optimizer_steps_per_sec": 0.35492614843128756,
+    "performance/samples_per_sec": 90.86109399840961,
+    "performance/effective_global_batch_size": 256,
+    "train/loss_action": 0.06425299495458603,
+    "train/loss_future_delta": 0.08305060118436813,
+    "train/loss_semantic_future": 0.018814172595739365,
+    "train/loss_video": 0.0781787633895874
+  },
+  "max_peak_allocated_gib": 95.67737579345703,
+  "max_peak_reserved_gib": 115.435546875,
+  "gpu_metrics": [
+    {
+      "step": 50,
+      "rank": 0,
+      "peak_allocated_bytes": 102730899456,
+      "peak_reserved_bytes": 123947974656,
+      "allocated_bytes": 28077753856,
+      "reserved_bytes": 123947974656
+    },
+    {
+      "step": 50,
+      "rank": 1,
+      "peak_allocated_bytes": 102730637312,
+      "peak_reserved_bytes": 123945877504,
+      "allocated_bytes": 28077753856,
+      "reserved_bytes": 123945877504
+    },
+    {
+      "step": 50,
+      "rank": 2,
+      "peak_allocated_bytes": 102730637312,
+      "peak_reserved_bytes": 123945877504,
+      "allocated_bytes": 28077753856,
+      "reserved_bytes": 123945877504
+    },
+    {
+      "step": 50,
+      "rank": 3,
+      "peak_allocated_bytes": 102732472320,
+      "peak_reserved_bytes": 123945877504,
+      "allocated_bytes": 28077753856,
+      "reserved_bytes": 123945877504
+    },
+    {
+      "step": 50,
+      "rank": 4,
+      "peak_allocated_bytes": 102732472320,
+      "peak_reserved_bytes": 123945877504,
+      "allocated_bytes": 28077753856,
+      "reserved_bytes": 123945877504
+    },
+    {
+      "step": 50,
+      "rank": 5,
+      "peak_allocated_bytes": 102732800000,
+      "peak_reserved_bytes": 123945877504,
+      "allocated_bytes": 28077753856,
+      "reserved_bytes": 123945877504
+    },
+    {
+      "step": 50,
+      "rank": 6,
+      "peak_allocated_bytes": 102730637312,
+      "peak_reserved_bytes": 123945877504,
+      "allocated_bytes": 28077753856,
+      "reserved_bytes": 123945877504
+    },
+    {
+      "step": 50,
+      "rank": 7,
+      "peak_allocated_bytes": 102732472320,
+      "peak_reserved_bytes": 123945877504,
+      "allocated_bytes": 28077753856,
+      "reserved_bytes": 123945877504
+    }
+  ],
+  "nvidia_smi": "0, 121206 MiB, 100 %\n1, 121204 MiB, 100 %\n2, 121204 MiB, 99 %\n3, 121204 MiB, 100 %\n4, 121204 MiB, 100 %\n5, 121204 MiB, 100 %\n6, 121204 MiB, 0 %\n7, 121204 MiB, 100 %",
+  "wandb_url": "https://wandb.ai/xymliu/cogact_baseline/runs/cgb200-20261023-100k",
+  "wandb_state": "running",
+  "wandb_verified_history": [
+    {
+      "_step": 10,
+      "train/loss": 0.257479727268219,
+      "train/loss_action": 0.05956258997321129,
+      "train/grad_norm": 0.6478702425956726
+    },
+    {
+      "_step": 20,
+      "train/loss": 0.24243830144405365,
+      "train/loss_action": 0.05663568526506424,
+      "train/grad_norm": 0.7295609712600708
+    },
+    {
+      "_step": 30,
+      "train/loss": 0.23602528870105743,
+      "train/loss_action": 0.05888941138982773,
+      "train/grad_norm": 0.7275673151016235
+    }
+  ],
+  "launch": {
+    "status": "launched",
+    "supervisor_pid": 192733,
+    "run_name": "b200-joint-bs256-100k-20261023",
+    "wandb_run_id": "cgb200-20261023-100k",
+    "wandb_project": "xymliu/cogact_baseline",
+    "wandb_base_url": "https://api.wandb.ai",
+    "output_dir": "/data/yuming/internw0-delta/runs/cogact/b200-joint-bs256-100k-20261023",
+    "command": [
+      "bash",
+      "scripts/cogact_b200_run.sh",
+      "train",
+      "task=cogact_bs256_100k",
+      "+source_commit=8e3994138af91c63976f86411202428b283a335d",
+      "+source_repository=https://github.com/starrliu/InternW0-Delta",
+      "+source_branch=cogact_baseline"
+    ],
+    "started_at_unix": 1792747656.0901737,
+    "source_commit": "8e3994138af91c63976f86411202428b283a335d",
+    "pod": "liluo-agibot-2-server-0",
+    "credential_handling": "environment only; not persisted in command/config/receipt"
+  }
+}
