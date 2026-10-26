@@ -35,6 +35,52 @@ bash scripts/serve_robotcontrol.sh \
 
 此脚本只启动服务进程，没有停止训练或操作 Pod 的命令。2026-10-26 按用户要求取消本地启动，仅完成接口测试和[训练/推理一致性审计](cogact_inference_parity_20261026.md)，未运行完整模型服务，也未占用训练 Pod 的 GPU。
 
+## 在 5090 上准备环境与文件
+
+代码在 `starrliu/InternW0-Delta` 的 `cogact_baseline` 分支。以下命令在一份新目录建立 Python 3.11 环境，选择支持 Blackwell 的 CUDA 12.8 PyTorch 构建；需要已安装兼容驱动和 `uv`。这是部署起点，尚未在 5090 上验证完整模型的显存及速度。
+
+```bash
+git clone --branch cogact_baseline git@github.com:starrliu/InternW0-Delta.git
+cd InternW0-Delta
+uv venv --python 3.11 .venv
+uv pip install --python .venv/bin/python --torch-backend cu128 -e '.[serve]'
+```
+
+Git 不含训练权重和冻结编码器。将匹配的部署文件单独放入以下目录（文件名可自行调整）：
+
+```text
+deploy-artifacts/
+  run/
+    config.yaml                 # 该训练运行保存的配置
+    normalization.json          # 对应全量训练集的统计
+    policy-step80000.pt          # 独立的已完成策略权重
+  checkpoints/
+    Wan-AI/
+      Wan2.2-TI2V-5B/
+        Wan2.2_VAE.pth
+        models_t5_umt5-xxl-enc-bf16.pth
+      Wan2.1-T2V-1.3B/
+        google/umt5-xxl/         # 完整 tokenizer 文件
+    RynnBrain1.1-2B/             # 完整模型、配置和 processor 文件
+```
+
+策略 `.pt` 已包含训练后的专家权重，服务不会用原始 DiT 初始化覆盖它，也不需要 DeepSpeed 优化器分片。当前已验证的 80k 独立副本及数据签名见审计报告。
+
+先进行 CPU 配置检查，再删除命令末尾的 `--check-config` 启动模型。示例将 T5 放到 CPU，降低单卡显存占用，但会占用相应主机内存：
+
+```bash
+CUDA_VISIBLE_DEVICES=0 bash scripts/serve_robotcontrol.sh \
+  --run-dir "$PWD/deploy-artifacts/run" \
+  --checkpoint "$PWD/deploy-artifacts/run/policy-step80000.pt" \
+  --stats "$PWD/deploy-artifacts/run/normalization.json" \
+  --model-root "$PWD/deploy-artifacts/checkpoints" \
+  --vlm-path "$PWD/deploy-artifacts/checkpoints/RynnBrain1.1-2B" \
+  --device cuda:0 --text-device cpu --port 5509 \
+  --check-config
+```
+
+`--check-config` 只核对训练配置、策略文件元数据及归一化，不能代替 GPU 模型加载或冻结编码器文件检查。实际服务启动后执行 `curl http://127.0.0.1:5509/health`，应看到加载步数及 `"supported_protocol_versions": [1, 2]`。
+
 ## RobotControl 端配置
 
 将本仓库 [policy_config.yaml](../deploy/robotcontrol/policy_config.yaml) 的内容用于 RobotControl 的 `g1_platform/config/policy_config.yaml`：
@@ -91,7 +137,46 @@ policy_port: 5509
 
 ## 历史观测与新回合
 
-每个服务进程对应一台机器人。缓存首个观测作为 anchor（本回合首帧），并寻找当前时刻前 32 个控制周期的 recent（历史帧）。这两项是模型的视觉条件，与 RTC 动作前缀不同。
+每个服务进程对应一台机器人。anchor 是本回合首帧，recent 是当前时刻前 32 个采样周期的历史帧。这两项是模型的视觉条件，与 RTC 动作前缀不同。服务支持下述显式历史 v2，以及旧客户端使用的服务端缓存 v1。
+
+### 显式历史 v2：推荐用于新客户端
+
+客户端在本地按真实采样时间维护图像缓存，推理期间继续采集；一次 `POST /api/inference` 同时发送当前、首帧和历史图像，不需要逐帧调用 `/api/observe`。客户端启动时检查 `/health` 的 `supported_protocol_versions` 包含 `2`，再启用此协议。
+
+在上文 JSON 的任务、状态与双臂启用字段之外，添加以下字段：
+
+```json
+{
+  "protocol_version": 2,
+  "episode_id": "episode-20261026-001",
+  "frame_index": 96,
+  "sampling_hz": 30,
+  "anchor_frame_index": 0,
+  "recent_frame_index": 64
+}
+```
+
+`episode_id` 为 1–128 个 ASCII 字母、数字或 `_.:-` 字符；每个新回合生成新的 ID。同一回合的 `frame_index` 必须严格递增，不能用请求次数推算。`sampling_hz` 必须是数字 30；`recent_frame_index` 必须为 `frame_index−32`，或缺失时的 `null`。可附带采样时间用于客户端诊断，服务不将其转换为帧号。
+
+multipart 图像字段如下，三个视角的顺序始终为头部、左腕、右腕：
+
+| 观测 | 文件字段 | 要求 |
+|---|---|---|
+| 当前 | `image_0`、`image_1`、`image_2` | 每次完整提供 |
+| 首帧 | `anchor_image_0`、`anchor_image_1`、`anchor_image_2` | 每次完整提供，同一回合保持不变 |
+| 历史 | `recent_image_0`、`recent_image_1`、`recent_image_2` | `recent_frame_index` 非空时完整提供；为空时全部省略 |
+
+建议使用 PNG 并省去客户端额外缩图，服务对三组观测应用相同的训练预处理。JPEG 也被接受；同一回合的 anchor 应采用固定编码配置。同为第 0 帧的图像必须相同：`frame_index=0` 时当前图像等于 anchor，`recent_frame_index=0` 时历史图像等于 anchor；服务对预处理后的画布做一致性检查。单个请求上限为 32 MiB。
+
+第 0、20 帧没有合法的 `t−32`，传 `null`；第 96 帧应传第 64 帧。若后者确实丢失，也可传 `null`，服务会屏蔽该视觉条件并记录告警，不把首帧冒充有效历史。首个 HTTP 请求可以从任意非负帧开始，因为请求内已提供第 0 帧。历史状态不在此协议中传输，模型使用当前关节与夹爪状态。
+
+新 `episode_id` 会开始新的服务端回合，且客户端仍应在任务重试时串行调用 `/api/reset`、清空自己的图像及动作队列。相同 ID 内改变任务指令或首帧会返回 400，需新 ID 或显式 reset。客户端必须丢弃旧回合的迟到响应，不得回传旧回合请求。v2 不使用请求到达时间或 60 秒空闲超时来重建时间轴。
+
+响应动作格式保持四个数组不变；额外的 `X-WAM-Protocol-Version: 2`、`X-WAM-Episode-Id` header 标识协议和回合。`/api/observe` 仅用于 v1，向该接口发送 v2 会返回 400。切换 v1/v2 前先 reset；历史文件或元数据未声明 v2 时也会返回 400，避免静默忽略。
+
+### 服务端缓存 v1：兼容原客户端
+
+省略 `protocol_version` 或明确设为 `1` 时，服务缓存首个观测，并从已接收观测寻找 recent。
 
 现有客户端不发送帧号，因此默认用请求到达时间按 30 Hz 估算；仅使用目标时刻之前、相差不超过 4 帧的真实历史观测，找不到则屏蔽 recent。网络/推理等待会使这种时间对齐近似，不能声称与训练的逐帧历史完全一致。
 
@@ -105,7 +190,7 @@ curl -X POST http://<服务 IP>:5509/api/reset
 
 或在下一次请求 JSON 中加 `"reset": true`，显式模式同时传 `"frame_index": 0`。这只重置模型历史，不移动机器人。指令改变或超过 60 秒没有请求也会自动清空历史。RobotControl 原有 `CogACTPolicy.reset()` 是空操作，不会自动调用此接口。
 
-`GET /health` 返回已加载的 checkpoint step 和数据签名。每次推理响应的 `X-WAM-Frame-Index`、`X-WAM-Recent-Frame`、`X-WAM-Inference-Seconds` header 分别报告当前帧、历史帧（或 `masked`）、请求处理耗时。
+两种协议下，`GET /health` 都返回已加载的 checkpoint step、数据签名和支持的协议版本。每次推理响应的 `X-WAM-Frame-Index`、`X-WAM-Recent-Frame`、`X-WAM-Inference-Seconds` header 分别报告当前帧、历史帧（或 `masked`）、请求处理耗时。
 
 ## 验证范围
 
@@ -117,5 +202,7 @@ ROBOTCONTROL_G1_ROOT=/path/to/RobotControl-G1 \
 ```
 
 测试包含训练状态/图像/归一化一致性、历史掩码与重置、缺字段/非法数值、单臂保持，以及使用**未修改的 RobotControl HTTP 客户端和动作解释器**通过本地 HTTP 服务收发 32 步动作。新增独立审计测试比较真实训练和在线推理的 attention mask（允许哪些 token 相互读取的规则），以及视觉语言条件和当前状态 token。昂贵的模型计算使用替身；完整 checkpoint 的 GPU 数值结果、推理延迟及实机动作效果还未验证。
+
+v2 增加了 PNG 三组图像传输、真实模型输入适配函数、首帧与准确历史帧选择、缺失历史掩码、回合重置、单调帧号、协议协商和错误请求检查。2026-10-26 上述命令共 **59 项通过**；v2 使用模拟客户端测试，尚未与修改后的 RobotControl 客户端或 5090 完成实机联调。
 
 2026-10-26 已在独立代码目录以 `CUDA_VISIBLE_DEVICES=''` 执行 `--check-config`，通过当前第 80,000 步权重及全量归一化检查。数据签名为 `2320fa375ded473df404986bcb388b55d50f6e9bd9e5ce5567dce19599a95e6f`，未更改正在训练的代码目录。

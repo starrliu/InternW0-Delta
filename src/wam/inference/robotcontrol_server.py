@@ -7,15 +7,18 @@ import json
 import logging
 import os
 from pathlib import Path
+import re
 import threading
 import time
 
 import numpy as np
 from PIL import Image, UnidentifiedImageError
+import torch
 
-from .cogact_policy import ObservationHistory, prepare_observation
+from .cogact_policy import ObservationHistory, prepare_images, prepare_observation
 
 LOG = logging.getLogger(__name__)
+SUPPORTED_PROTOCOL_VERSIONS = (1, 2)
 
 
 def parse_payload(payload):
@@ -47,6 +50,27 @@ def parse_payload(payload):
         raise ValueError("At least one arm must be enabled")
     if "frame_index" in payload and (type(payload["frame_index"]) is not int or payload["frame_index"] < 0):
         raise ValueError("frame_index must be a non-negative integer at 30 Hz")
+    version = payload.get("protocol_version", 1)
+    if type(version) is not int or version not in SUPPORTED_PROTOCOL_VERSIONS:
+        raise ValueError("Unsupported protocol_version; expected 1 or 2")
+    history_fields = ("episode_id", "sampling_hz", "anchor_frame_index", "recent_frame_index")
+    if version == 1 and any(key in payload for key in history_fields):
+        raise ValueError("Explicit history metadata requires protocol_version=2")
+    if version == 2:
+        episode_id = payload.get("episode_id")
+        if not isinstance(episode_id, str) or not re.fullmatch(r"[A-Za-z0-9_.:-]{1,128}", episode_id):
+            raise ValueError("episode_id must contain 1-128 ASCII letters, digits, or _.:-")
+        if "frame_index" not in payload:
+            raise ValueError("Protocol v2 requires frame_index")
+        if type(payload.get("sampling_hz")) not in (int, float) or payload["sampling_hz"] != 30:
+            raise ValueError("Protocol v2 requires sampling_hz=30")
+        if type(payload.get("anchor_frame_index")) is not int or payload["anchor_frame_index"] != 0:
+            raise ValueError("Protocol v2 requires anchor_frame_index=0")
+        if "recent_frame_index" not in payload:
+            raise ValueError("Specify recent_frame_index, or null when unavailable")
+        recent = payload["recent_frame_index"]
+        if recent is not None and (type(recent) is not int or recent < 0 or recent != payload["frame_index"] - 32):
+            raise ValueError("recent_frame_index must be frame_index-32, or null when unavailable")
     return instruction.strip(), np.asarray(values, dtype=np.float32)
 
 
@@ -81,11 +105,74 @@ class PolicyService:
         self.instruction = None
         self.started_at = self.last_arrival = None
         self.explicit_clock = None
+        self.protocol_version = None
+        self.episode_id = None
+        self.explicit_last_step = -1
+        self.explicit_anchor = None
 
-    def process(self, images, payload, *, observe_only=False, now=None):
+    def process(self, images, payload, *, anchor_images=None, recent_images=None, observe_only=False, now=None):
         instruction, state = parse_payload(payload)
+        version = payload.get("protocol_version", 1)
+        if self.protocol_version not in (None, version) and not payload.get("reset", False):
+            raise ValueError("Reset before switching protocol versions")
         observation = prepare_observation(images, state, self.policy.normalizer,
                                           crop_head_3173=self.crop_head_3173)
+        if version == 2:
+            if observe_only:
+                raise ValueError("Protocol v2 sends history in /api/inference; /api/observe is v1 only")
+            memory, step, recent_step = self._explicit_history(
+                payload, instruction, observation.image, anchor_images, recent_images)
+        else:
+            if anchor_images is not None or recent_images is not None:
+                raise ValueError("Explicit history images require protocol_version=2")
+            memory, step, recent_step = self._cached_history(observation, payload, instruction, now)
+        self.protocol_version = version
+        if observe_only:
+            return {"frame_index": step}, step, recent_step
+        try:
+            action = self.policy.predict(observation, instruction, memory)
+        except Exception as exc:
+            # A model ValueError is a server failure, not malformed input.
+            raise RuntimeError("Model prediction failed") from exc
+        return action_response(action, state, payload), step, recent_step
+
+    def _explicit_history(self, payload, instruction, current_image, anchor_images, recent_images):
+        if anchor_images is None:
+            raise ValueError("Protocol v2 requires all three anchor images on every request")
+        step, recent_step = payload["frame_index"], payload["recent_frame_index"]
+        if (recent_step is None) != (recent_images is None):
+            raise ValueError("Supply recent images exactly when recent_frame_index is not null")
+        episode_id = payload["episode_id"]
+        new_episode = payload.get("reset", False) or episode_id != self.episode_id
+        if not new_episode:
+            if instruction != self.instruction:
+                raise ValueError("Start a new episode_id or reset when changing the instruction")
+            if step <= self.explicit_last_step:
+                raise ValueError("frame_index must strictly increase within an episode")
+        anchor, _ = prepare_images(anchor_images, crop_head_3173=self.crop_head_3173)
+        if not new_episode and not anchor.equal(self.explicit_anchor):
+            raise ValueError("Anchor images changed within an episode; start a new episode_id or reset")
+        recent = anchor if recent_images is None else prepare_images(
+            recent_images, crop_head_3173=self.crop_head_3173)[0]
+        if step == 0 and not current_image.equal(anchor):
+            raise ValueError("At frame_index=0, current and anchor must be the same observation")
+        if recent_step == 0 and not recent.equal(anchor):
+            raise ValueError("At recent_frame_index=0, recent and anchor must be the same observation")
+        # Only visual history is consumed by the online policy. Do not invent
+        # historical joint states from the current state when none were sent.
+        memory = {"memory_video_anchor": anchor, "memory_video_anchor_is_pad": torch.tensor([False]),
+                  "memory_video_recent": recent, "memory_video_recent_is_pad": torch.tensor([recent_step is None])}
+        # Validate the entire packet before replacing episode state. Supplying
+        # the anchor allows the first request to occur at any sampled frame.
+        if new_episode:
+            self.reset()
+        self.episode_id, self.instruction = episode_id, instruction
+        self.explicit_last_step, self.explicit_anchor = step, anchor
+        if step >= 32 and recent_step is None:
+            LOG.warning("Protocol v2 episode %s frame %d has no t-32 observation; recent is masked", episode_id, step)
+        return memory, step, recent_step
+
+    def _cached_history(self, observation, payload, instruction, now):
         now = time.monotonic() if now is None else now
         if (payload.get("reset", False) or instruction != self.instruction or
             (self.last_arrival is not None and now - self.last_arrival > self.idle_reset_seconds)):
@@ -101,14 +188,7 @@ class PolicyService:
         # With the stock client, request arrival time only approximates capture time.
         # Use an actually observed past frame within 4 ticks, otherwise mask it.
         memory, recent_step = self.history.inputs(step, tolerance=0 if explicit else 4)
-        if observe_only:
-            return {"frame_index": step}, step, recent_step
-        try:
-            action = self.policy.predict(observation, instruction, memory)
-        except Exception as exc:
-            # A model ValueError is a server failure, not malformed input.
-            raise RuntimeError("Model prediction failed") from exc
-        return action_response(action, state, payload), step, recent_step
+        return memory, step, recent_step
 
 
 def create_app(service):
@@ -123,7 +203,8 @@ def create_app(service):
 
     @app.get("/health")
     def health():
-        return jsonify(status="ready", **service.report)
+        return jsonify({**service.report, "status": "ready",
+                        "supported_protocol_versions": list(SUPPORTED_PROTOCOL_VERSIONS)})
 
     @app.post("/api/reset")
     def reset():
@@ -143,19 +224,37 @@ def create_app(service):
         except (ValueError, UnicodeError) as exc:
             raise ValueError("Missing or invalid multipart json part") from exc
         parse_payload(payload)
-        images = []
-        for index in range(3):
-            name = f"image_{index}"
-            if name not in request.files:
-                raise ValueError(f"Missing {name}; all three cameras are required")
-            try:
-                with Image.open(io.BytesIO(request.files[name].read())) as image:
-                    if image.width * image.height > 16_000_000:
-                        raise ValueError(f"{name} exceeds 16 megapixels")
-                    images.append(np.asarray(image.convert("RGB")))
-            except (UnidentifiedImageError, OSError, Image.DecompressionBombError) as exc:
-                raise ValueError(f"Invalid encoded image: {name}") from exc
-        return images, payload
+
+        def read_images(prefix):
+            images = []
+            for index in range(3):
+                name = f"{prefix}image_{index}"
+                if name not in request.files:
+                    raise ValueError(f"Missing {name}; all three cameras are required")
+                try:
+                    with Image.open(io.BytesIO(request.files[name].read())) as image:
+                        if image.width * image.height > 16_000_000:
+                            raise ValueError(f"{name} exceeds 16 megapixels")
+                        images.append(np.asarray(image.convert("RGB")))
+                except (UnidentifiedImageError, OSError, Image.DecompressionBombError) as exc:
+                    raise ValueError(f"Invalid encoded image: {name}") from exc
+            return images
+
+        images = read_images("")
+        anchor_images = recent_images = None
+        history_files = [name for name in request.files if name.startswith(("anchor_image_", "recent_image_"))]
+        if payload.get("protocol_version", 1) == 2:
+            allowed = {f"{prefix}image_{i}" for prefix in ("anchor_", "recent_") for i in range(3)}
+            if any(name not in allowed for name in history_files):
+                raise ValueError("History image indices must be 0, 1, 2")
+            anchor_images = read_images("anchor_")
+            if payload["recent_frame_index"] is not None:
+                recent_images = read_images("recent_")
+            elif any(name.startswith("recent_image_") for name in history_files):
+                raise ValueError("Omit recent images when recent_frame_index is null")
+        elif history_files:
+            raise ValueError("Explicit history images require protocol_version=2")
+        return images, payload, anchor_images, recent_images
 
     @app.post("/api/inference")
     @app.post("/api/observe")
@@ -164,9 +263,13 @@ def create_app(service):
             return jsonify(error="Inference busy; serialize requests for this robot"), 409
         started = time.perf_counter()
         try:
-            images, payload = read_request()
-            result, step, recent = service.process(images, payload, observe_only=request.path == "/api/observe")
+            images, payload, anchor_images, recent_images = read_request()
+            result, step, recent = service.process(images, payload, anchor_images=anchor_images,
+                                                  recent_images=recent_images, observe_only=request.path == "/api/observe")
             response = jsonify(result)
+            response.headers["X-WAM-Protocol-Version"] = str(payload.get("protocol_version", 1))
+            if "episode_id" in payload:
+                response.headers["X-WAM-Episode-Id"] = payload["episode_id"]
             response.headers["X-WAM-Frame-Index"] = str(step)
             response.headers["X-WAM-Recent-Frame"] = "masked" if recent is None else str(recent)
             response.headers["X-WAM-Inference-Seconds"] = f"{time.perf_counter() - started:.4f}"

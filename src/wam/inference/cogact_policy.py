@@ -51,7 +51,7 @@ class Observation:
     proprio: torch.Tensor  # [80], normalized and masked
 
 
-def prepare_observation(images, state, normalizer, *, crop_head_3173=False):
+def prepare_images(images, *, crop_head_3173=False):
     """Resize each RGB view before composing the Wan canvas, as in the dataset."""
     views = []
     if len(images) != 3:
@@ -68,9 +68,12 @@ def prepare_observation(images, state, normalizer, *, crop_head_3173=False):
         tensor = torch.from_numpy(image.copy()).permute(2, 0, 1).float() / 255
         views.append(TF.resize(tensor, [192, 256], antialias=True))
     views = torch.stack(views)
-    return Observation(canvas(views[:, None]),
-                       (views * 255).round().clamp(0, 255).to(torch.uint8),
-                       normalizer.encode_state(state))
+    return canvas(views[:, None]), (views * 255).round().clamp(0, 255).to(torch.uint8)
+
+
+def prepare_observation(images, state, normalizer, *, crop_head_3173=False):
+    image, vlm_images = prepare_images(images, crop_head_3173=crop_head_3173)
+    return Observation(image, vlm_images, normalizer.encode_state(state))
 
 
 class ObservationHistory:

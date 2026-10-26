@@ -50,14 +50,143 @@ class FakePolicy:
         return np.tile(np.arange(16, dtype=np.float32) / 20, (32, 1))
 
 
-def multipart(payload, images):
+def multipart(payload, images, *, anchor_images=None, recent_images=None, image_format="JPEG"):
     result = {"json": (io.BytesIO(json.dumps(payload).encode()), "data.json", "application/json")}
-    for i, image in enumerate(images):
-        stream = io.BytesIO()
-        Image.fromarray(image).save(stream, "JPEG")
-        stream.seek(0)
-        result[f"image_{i}"] = (stream, f"{i}.jpg", "image/jpeg")
+    for prefix, group in (("", images), ("anchor_", anchor_images), ("recent_", recent_images)):
+        if group is None:
+            continue
+        for i, image in enumerate(group):
+            stream = io.BytesIO()
+            Image.fromarray(image).save(stream, image_format)
+            stream.seek(0)
+            extension = image_format.lower()
+            result[f"{prefix}image_{i}"] = (stream, f"{prefix}{i}.{extension}", f"image/{extension}")
     return result
+
+
+def protocol_v2(payload, step, *, episode="episode-a", missing=False):
+    return dict(payload, protocol_version=2, episode_id=episode, sampling_hz=30,
+                frame_index=step, anchor_frame_index=0,
+                recent_frame_index=None if missing or step < 32 else step - 32)
+
+
+@pytest.mark.parametrize("step,missing", [(0, False), (20, False), (32, False), (96, False), (96, True)])
+def test_v2_explicit_png_history_reaches_model_without_observe(normalizer, payload, step, missing):
+    from wam.model.modules.conditioning.input_builder import prepare_memory_video_inputs
+    rng = np.random.default_rng(42)
+    anchor = [rng.integers(0, 256, (192, 256, 3), dtype=np.uint8) for _ in range(3)]
+    current = anchor if step == 0 else [np.full_like(x, 20 + i * 70) for i, x in enumerate(anchor)]
+    recent = anchor if step == 32 else [np.full_like(x, 50 + i * 50) for i, x in enumerate(anchor)]
+    packet = protocol_v2(payload, step, missing=missing)
+    if packet["recent_frame_index"] is None:
+        recent = None
+    policy = FakePolicy(normalizer)
+    service = PolicyService(policy)
+    client = create_app(service).test_client()
+    assert client.get("/health").json["supported_protocol_versions"] == [1, 2]
+    response = client.post("/api/inference", data=multipart(
+        packet, current, anchor_images=anchor, recent_images=recent, image_format="PNG"))
+    assert response.status_code == 200, response.json
+    assert response.headers["X-WAM-Episode-Id"] == "episode-a"
+    assert response.headers["X-WAM-Protocol-Version"] == "2"
+    assert response.headers["X-WAM-Frame-Index"] == str(step)
+    assert response.headers["X-WAM-Recent-Frame"] == ("masked" if recent is None else str(step - 32))
+    assert set(response.json) == set(payload["state"])  # metadata must stay out of action arrays
+    observation, _, memory = policy.calls[-1]
+    np.testing.assert_array_equal(observation.vlm_images.numpy(), np.stack(current).transpose(0, 3, 1, 2))
+    model = SimpleNamespace(device="cpu", torch_dtype=torch.float32)
+    for name, frames, padded in (("anchor", anchor, False), ("recent", recent or anchor, recent is None)):
+        prefix = "memory_video_" + name
+        # Exercise the real model input adapter, not just a fake predictor.
+        video, pad = prepare_memory_video_inputs(model, memory, name=prefix, batch_size=1, height=384, width=256)
+        views = torch.stack([torch.from_numpy(x).permute(2, 0, 1).float() / 255 for x in frames])
+        torch.testing.assert_close(video[0], canvas(views[:, None]), rtol=0, atol=0)
+        assert pad.shape == (1, 1) and pad.item() is padded
+        assert prefix + "_proprio" not in memory
+
+
+def test_v2_episode_reset_monotonic_frames_and_atomic_validation(normalizer, images, payload):
+    service = PolicyService(FakePolicy(normalizer))
+    client = create_app(service).test_client()
+    def send(packet, anchor=images):
+        return client.post("/api/inference", data=multipart(packet, anchor if packet["frame_index"] == 0 else images, anchor_images=anchor,
+                          recent_images=None if packet["recent_frame_index"] is None else images, image_format="PNG"))
+    assert send(protocol_v2(payload, 96)).status_code == 200  # no earlier HTTP observation required
+    assert send(protocol_v2(payload, 96)).status_code == 400
+    assert send(protocol_v2(payload, 80)).status_code == 400
+    changed_anchor = [np.zeros_like(x) for x in images]
+    assert send(protocol_v2(payload, 112), anchor=changed_anchor).status_code == 400
+    assert send(protocol_v2(dict(payload, task_description="New task"), 112)).status_code == 400
+    assert service.explicit_last_step == 96
+    assert send(protocol_v2(payload, 112)).status_code == 200
+    # Same instruction, new episode: use the new first frame and a fresh timeline.
+    assert send(protocol_v2(payload, 0, episode="episode-b"), anchor=changed_anchor).status_code == 200
+    assert service.episode_id == "episode-b" and service.explicit_last_step == 0
+    assert client.post("/api/reset").status_code == 200
+    assert service.episode_id is None and service.explicit_anchor is None
+    assert send(protocol_v2(payload, 0, episode="episode-c")).status_code == 200
+    assert send(dict(protocol_v2(payload, 0, episode="episode-c"), reset=True), anchor=changed_anchor).status_code == 200
+    assert client.post("/api/inference", data=multipart(payload, images)).status_code == 400
+    assert client.post("/api/reset").status_code == 200
+    assert client.post("/api/inference", data=multipart(payload, images)).status_code == 200
+
+
+@pytest.mark.parametrize("step", [0, 32])
+def test_v2_rejects_two_different_images_labeled_as_frame_zero(normalizer, images, payload, step):
+    policy = FakePolicy(normalizer)
+    service = PolicyService(policy)
+    response = create_app(service).test_client().post("/api/inference", data=multipart(
+        protocol_v2(payload, step), images, anchor_images=[np.zeros_like(x) for x in images],
+        recent_images=images if step == 32 else None, image_format="PNG"))
+    assert response.status_code == 400
+    assert "same observation" in response.json["error"]
+    assert service.episode_id is None and not policy.calls
+
+
+@pytest.mark.parametrize("updates", [
+    {"protocol_version": 3}, {"protocol_version": True}, {"protocol_version": "2"},
+    {"episode_id": "bad\nid"}, {"episode_id": ""}, {"sampling_hz": 25}, {"sampling_hz": "30"},
+    {"frame_index": True}, {"frame_index": -1}, {"anchor_frame_index": 1}, {"anchor_frame_index": False},
+    {"recent_frame_index": 63}, {"recent_frame_index": -1}, {"recent_frame_index": False},
+])
+def test_v2_rejects_invalid_protocol_and_temporal_metadata(payload, updates):
+    with pytest.raises(ValueError):
+        parse_payload(dict(protocol_v2(payload, 96), **updates))
+
+
+def test_v2_requires_complete_consistent_history_and_explicit_version(normalizer, images, payload):
+    policy = FakePolicy(normalizer)
+    service = PolicyService(policy)
+    client = create_app(service).test_client()
+    packet = protocol_v2(payload, 96)
+    for missing_key in ("frame_index", "anchor_frame_index", "recent_frame_index", "sampling_hz", "episode_id"):
+        invalid = {k: v for k, v in packet.items() if k != missing_key}
+        with pytest.raises(ValueError):
+            parse_payload(invalid)
+    for missing_file in ("anchor_image_0", "recent_image_2", "image_1"):
+        data = multipart(packet, images, anchor_images=images, recent_images=images)
+        del data[missing_file]
+        assert client.post("/api/inference", data=data).status_code == 400
+    assert client.post("/api/inference", data=multipart(
+        protocol_v2(payload, 20), images, anchor_images=images, recent_images=images)).status_code == 400
+    assert client.post("/api/inference", data=multipart(
+        payload, images, anchor_images=images)).status_code == 400
+    with pytest.raises(ValueError, match="protocol_version=2"):
+        parse_payload({k: v for k, v in packet.items() if k != "protocol_version"})
+    assert client.post("/api/observe", data=multipart(
+        packet, images, anchor_images=images, recent_images=images)).status_code == 400
+    assert not policy.calls and service.episode_id is None
+
+
+def test_v2_model_failure_clears_episode(normalizer, images, payload):
+    class BrokenPolicy(FakePolicy):
+        def predict(self, *args):
+            raise RuntimeError("test model failure")
+    service = PolicyService(BrokenPolicy(normalizer))
+    response = create_app(service).test_client().post("/api/inference", data=multipart(
+        protocol_v2(payload, 96), images, anchor_images=images, recent_images=images))
+    assert response.status_code == 500
+    assert service.episode_id is None and service.explicit_anchor is None
 
 
 def test_training_state_image_and_action_parity(normalizer, images, payload):
