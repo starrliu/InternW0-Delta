@@ -2,6 +2,8 @@
 
 [Home](../README.md) · [Models](../docs/models.md) · [中文](README_zh.md)
 
+For the CogACT dual-arm 7-joint baseline, see the [RobotControl-G1 HTTP serving guide](../docs/cogact_robotcontrol_serve.md) and `scripts/serve_robotcontrol.sh`. This interface returns 32-step absolute joint targets with RTC disabled.
+
 ## RTC training
 
 Prepare the ACONe LeRobot export and the [initialization weights](https://huggingface.co/InternRobotics/InternW0-Delta-Base):

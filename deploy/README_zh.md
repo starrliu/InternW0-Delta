@@ -2,6 +2,8 @@
 
 [首页](../README_zh.md) · [模型](../docs/models.md) · [English](README.md)
 
+CogACT 的双臂 7 关节模型通过 RobotControl-G1 部署时，使用[HTTP serve 指南](../docs/cogact_robotcontrol_serve.md)和 `scripts/serve_robotcontrol.sh`；该接口使用 32 步绝对关节动作，RTC 关闭。
+
 ## RTC 训练
 
 准备 ACONe LeRobot 数据和[初始化权重](https://huggingface.co/InternRobotics/InternW0-Delta-Base)：

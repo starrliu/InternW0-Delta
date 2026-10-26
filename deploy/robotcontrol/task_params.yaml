@@ -1,0 +1,10 @@
+# RobotControl-G1 training-cadence defaults. Task/subtask overrides take precedence.
+global_defaults:
+  waypoint_duration: 0.03333333333333333
+  process_length: 32
+  execution_step_interval: 1
+  left_gripper_scale_factor: 1.0
+  right_gripper_scale_factor: 1.0
+  gripper_delay_frames: 0
+  right_only: false
+tasks: {}

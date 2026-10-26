@@ -1,0 +1,4 @@
+# RobotControl-G1: g1_platform/config/policy_config.yaml
+policy_type: cogact
+action_format: joint_angles
+input_format: joint_angles
