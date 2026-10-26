@@ -1,0 +1,10 @@
+# @package _global_
+# Two existing Pods, each with eight B200s. Preserve the original global batch.
+defaults:
+  - cogact_bs256_100k
+  - _self_
+
+batch_size: 16
+# Preserve the same 16 fixed training samples and per-sample evaluation seeds:
+# previously 8 ranks x 2; now 16 ranks x 1.
+eval_loss_samples_per_rank: 1

@@ -261,6 +261,9 @@ class WAMTrainer:
             dir=self.output_dir,
             config=OmegaConf.to_container(self.cfg, resolve=True),
         )
+        # A resumed run can change per-rank batch and topology while preserving
+        # the global training plan. Record the configuration actually running.
+        self.wandb_run.config.update(OmegaConf.to_container(self.cfg, resolve=True), allow_val_change=True)
         logger.debug(
             "Initialized wandb run: workspace=%s project=%s name=%s",
             self.cfg.wandb.workspace,
@@ -1384,6 +1387,8 @@ class WAMTrainer:
             "epoch": int(self.epoch),
             "batch_in_epoch": int(self.batch_in_epoch),
             "step_tag": str(step_tag),
+            "resume_world_size": int(self.accelerator.num_processes),
+            "resume_global_batch_size": int(self.batch_size * self.accelerator.num_processes * self.gradient_accumulation_steps),
         }
         if weights_path is not None:
             payload["weights_path"] = str(weights_path)
@@ -1416,11 +1421,22 @@ class WAMTrainer:
         return {"weights_path": ckpt_path, "state_path": latest_state_path}
 
     def load_training_state(self, state_dir: str):
-        self.accelerator.load_state(input_dir=state_dir)
         state_file = Path(state_dir) / "trainer_state.json"
+        payload = json.loads(state_file.read_text()) if state_file.exists() else {}
+        world_size = int(self.accelerator.num_processes)
+        global_batch = self.batch_size * world_size * self.gradient_accumulation_steps
+        if payload.get("resume_world_size", world_size) != world_size:
+            raise ValueError("Checkpoint GPU count differs; repartition the ZeRO state before resuming.")
+        if payload.get("resume_global_batch_size", global_batch) != global_batch:
+            raise ValueError("Resume must preserve the checkpoint's global batch size and data position.")
+        if "resume_rng_seed" in payload and not (Path(state_dir) / "reshard_complete.json").is_file():
+            raise ValueError("Repartitioned checkpoint has not completed verification.")
+        self.accelerator.load_state(input_dir=state_dir)
+        if "resume_rng_seed" in payload:
+            set_global_seed(int(payload["resume_rng_seed"]))
+            logger.info("Reseeded stochastic streams after GPU-count change: base_seed=%d rank=%d",
+                        payload["resume_rng_seed"], self.accelerator.process_index)
         if state_file.exists():
-            with open(state_file, "r", encoding="utf-8") as f:
-                payload = json.load(f)
             self.global_step = int(payload["global_step"])
 
             if "epoch" in payload and "batch_in_epoch" in payload:
@@ -1443,6 +1459,7 @@ class WAMTrainer:
                     "optimizer/scheduler were restored, but dataloader progress resume is skipped."
                 )
             self.accelerator.wait_for_everyone()
+            logger.info("Restored full training state at step=%d from %s", self.global_step, state_dir)
             return
 
         match = re.search(r"step[_-](\d+)$", str(state_dir).rstrip("/"))

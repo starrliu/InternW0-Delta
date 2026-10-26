@@ -1,0 +1,26 @@
+{
+  "0/fp32": {
+    "bitwise_equal": true,
+    "max_abs_diff": 0.0
+  },
+  "0/exp_avg": {
+    "bitwise_equal": true,
+    "max_abs_diff": 0.0
+  },
+  "0/exp_avg_sq": {
+    "bitwise_equal": true,
+    "max_abs_diff": 0.0
+  },
+  "1/fp32": {
+    "bitwise_equal": true,
+    "max_abs_diff": 0.0
+  },
+  "1/exp_avg": {
+    "bitwise_equal": true,
+    "max_abs_diff": 0.0
+  },
+  "1/exp_avg_sq": {
+    "bitwise_equal": true,
+    "max_abs_diff": 0.0
+  }
+}

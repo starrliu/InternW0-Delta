@@ -1,0 +1,30 @@
+# Communication only; does not create, replace, restart or release Pods/Jobs.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: cogact-dual-b200-20261026-peers
+  namespace: bonete05
+  annotations:
+    purpose: TCP bootstrap/control between the two existing CogACT training Pods
+spec:
+  podSelector:
+    matchLabels:
+      volcano.sh/task-index: "0"
+      volcano.sh/task-spec: server
+    matchExpressions:
+      - key: volcano.sh/job-name
+        operator: In
+        values: [liluo-agibot-1, liluo-agibot-2]
+  policyTypes: [Ingress]
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              volcano.sh/task-index: "0"
+              volcano.sh/task-spec: server
+            matchExpressions:
+              - key: volcano.sh/job-name
+                operator: In
+                values: [liluo-agibot-1, liluo-agibot-2]
+      ports:
+        - protocol: TCP

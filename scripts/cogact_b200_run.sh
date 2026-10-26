@@ -27,7 +27,12 @@ export NPROC_PER_NODE=8
 export WAM_ACCELERATE_CONFIG=scripts/accelerate_configs/accelerate_zero2_ds.yaml
 export TORCH_NCCL_ASYNC_ERROR_HANDLING=1
 mkdir -p "$WAM_OUTPUT_ROOT"
-exec 9>/data/yuming/internw0-delta/gpu-run.lock
+if (( ${NNODES:-1} > 1 )); then
+  # Shared storage needs a separate lock for each existing Pod's launcher.
+  exec 9>"/data/yuming/internw0-delta/gpu-run-${HOSTNAME:?}.lock"
+else
+  exec 9>/data/yuming/internw0-delta/gpu-run.lock
+fi
 flock -n 9 || { echo 'Another InternW0 GPU process owns the run lock' >&2; exit 3; }
 if [[ -n "$(nvidia-smi --query-compute-apps=pid --format=csv,noheader)" ]]; then
   echo 'GPUs have existing processes. This script does not stop them.' >&2

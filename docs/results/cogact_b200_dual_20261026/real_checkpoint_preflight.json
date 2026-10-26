@@ -1,0 +1,10 @@
+{
+  "source_world_size": 8,
+  "target_world_size": 16,
+  "global_batch": 256,
+  "step": 75000,
+  "group_numels": [
+    6211551888
+  ],
+  "validation": "passed"
+}

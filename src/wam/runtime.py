@@ -95,16 +95,16 @@ def run_training(
     validate_training_config(cfg)
     configure_compiler_cache(cfg)
     misc.register_work_dir(cfg.output_dir)
-    config_payload = OmegaConf.to_container(cfg, resolve=True)
-    with open(Path(cfg.output_dir) / "config.yaml", "w") as f:
-        OmegaConf.save(config_payload, f)
-
     mixed_precision = _normalize_mixed_precision(cfg.mixed_precision)
     accelerator = Accelerator(
         gradient_accumulation_steps=int(cfg.gradient_accumulation_steps),
         mixed_precision=mixed_precision,
         step_scheduler_with_optimizer=False,
     )
+    if accelerator.is_main_process:
+        config_payload = OmegaConf.to_container(cfg, resolve=True)
+        with open(Path(cfg.output_dir) / "config.yaml", "w") as f:
+            OmegaConf.save(config_payload, f)
     runtime_device = torch.device(accelerator.device)
     if runtime_device.type == "cuda":
         if runtime_device.index is None:
