@@ -1,0 +1,156 @@
+{
+  "source": "/data/yuming/internw0-delta/transition-20261026/state8-step80000",
+  "old_world_size": 8,
+  "new_world_size": 16,
+  "step": 80000,
+  "global_batch": 256,
+  "group_numels": [
+    6211551888
+  ],
+  "verified_shards": [
+    {
+      "rank": 0,
+      "tensor_sha256": {
+        "0/fp32": "dd12341e4a2f67b4ff21bfa28cd9101d095a9b51c054c19644afe287f3327fce",
+        "0/exp_avg": "afe88591793a12649aef484e906a95cf8e97c96df16fe565adc0277db00475d0",
+        "0/exp_avg_sq": "f45ce3b7bdef23a0583853ef8c7f23c5027e82f437a57742d723c761ea917a30"
+      },
+      "bytes": 4658673189
+    },
+    {
+      "rank": 1,
+      "tensor_sha256": {
+        "0/fp32": "848eac9a1cd7b20187f65e3db5604558b0aee8bf4c6ec499b509129260e45dbf",
+        "0/exp_avg": "35f23fb2fa9b9f791c400cbf51f65fbcecdc87d423dc8b20017d68b050ec30c7",
+        "0/exp_avg_sq": "61a90f6f8efa561c1874230b22059fdf67731af4e77f57d451544ba223d01214"
+      },
+      "bytes": 4658672997
+    },
+    {
+      "rank": 2,
+      "tensor_sha256": {
+        "0/fp32": "14f444ee2258f611a2ebca402d0d47706da286f5a3a01e15389848333852ad94",
+        "0/exp_avg": "5e76c7811459e71565050199e61c1b3cf3b8a480cb781f1ff0b34676f7b15a85",
+        "0/exp_avg_sq": "a86aaaa21c3a4b34519682125ee84aa0e285a651a2206fd2f8c84a3de413ce0c"
+      },
+      "bytes": 4658673637
+    },
+    {
+      "rank": 3,
+      "tensor_sha256": {
+        "0/fp32": "b985e4bfb3ec84aa9dfe0524d3b498a6ddf20be921fc75ba4e46468e2993d4a5",
+        "0/exp_avg": "08cb65ca1403547bb2eee190ecf2868f0175f51175cd79336067193016a4cac8",
+        "0/exp_avg_sq": "751af0bb62b9bf2bd775dfc2a6d3a015b063b07e597561abd2f48963e570c84f"
+      },
+      "bytes": 4658672357
+    },
+    {
+      "rank": 4,
+      "tensor_sha256": {
+        "0/fp32": "27fd3f696fceaaa9ab02ecf893460043f9253dff12f7880e9ef453a7b8a4edd2",
+        "0/exp_avg": "bee335a5c33fb4820cfd94230c3619329ee5a0b730f64a3eb7a741412d95c626",
+        "0/exp_avg_sq": "b441477aa1341259f2a613358d273366f2d3e0e07f1d46f5fe240adf473ba4ef"
+      },
+      "bytes": 4658673573
+    },
+    {
+      "rank": 5,
+      "tensor_sha256": {
+        "0/fp32": "4ab15c4548ae296f6005b1fbbe1910ebfcec123ef93ec907bb5488a45e9a3e5d",
+        "0/exp_avg": "6f32c97b2767cf5991a3d7528cef74a2e8aad1dac769583fd3401a66b5727935",
+        "0/exp_avg_sq": "55134dfe7f1928ce17dd45371038e083cafe334d15280de506df6d0e4d828718"
+      },
+      "bytes": 4658673189
+    },
+    {
+      "rank": 6,
+      "tensor_sha256": {
+        "0/fp32": "ea9c3ea333b4426776b8f4d277cfcc09234dfe1cfc06eb94c8b7bb3adee1dec2",
+        "0/exp_avg": "d08604011c5fae78934b7742ddf10bc56f0e94ba80cb018b375a54436a9c9455",
+        "0/exp_avg_sq": "41ed5eb9df48bd14ec7d49ce9a0b351182b1114dc1d39aac9829509a72920726"
+      },
+      "bytes": 4658672677
+    },
+    {
+      "rank": 7,
+      "tensor_sha256": {
+        "0/fp32": "759bd50bc1f9b3df6086e0a8b944c6e16f0e969dad7bee59562473cf227e0a1f",
+        "0/exp_avg": "fa0959b3c4bab7a6ca6cce9cfc56695dc1ab3d75f5cee7f54c6cd59a7785779f",
+        "0/exp_avg_sq": "ee507aca5f1a59ae0ae2e089fce655e751e40958d82865d33aa7075eeeacbf6e"
+      },
+      "bytes": 4658673765
+    },
+    {
+      "rank": 8,
+      "tensor_sha256": {
+        "0/fp32": "0755e60389b7da9c498808949360e6d6379f2f8652b2e7d9d4af58ed579a0d35",
+        "0/exp_avg": "54be221b4ec72a4a8f6b07feea9aa04a8bcffa54affc792aea3c65e1b7e2164b",
+        "0/exp_avg_sq": "f07779aea9498015e39871a978dd48073949ca5d766f4a12d53fc008e2b748cb"
+      },
+      "bytes": 4658672997
+    },
+    {
+      "rank": 9,
+      "tensor_sha256": {
+        "0/fp32": "51b0c0b41eae01c0126dc1306c541fbd098df4ccab5c154b3e3574012cd5dd4d",
+        "0/exp_avg": "f66f1e992dd71a41ace8494ad3cfe9737cf05ed6eb528215db6f03c6602511b0",
+        "0/exp_avg_sq": "e878dd6b78dfe92439256a82b655eff2a0967561a2e1a3a3df7c259ee0d4b1c0"
+      },
+      "bytes": 4658672869
+    },
+    {
+      "rank": 10,
+      "tensor_sha256": {
+        "0/fp32": "0e7790f869be65740297fcd0a60632f45c90773904cd23e614fb21856a62b243",
+        "0/exp_avg": "bf8cce0f3c7fe6e6bab0633367482f1e3de9990b0d67993c589c3c0cd0455493",
+        "0/exp_avg_sq": "814a3d738324296eb743d6d6c5cd86a34acaa483cf8a5d425d97878ed2cc673e"
+      },
+      "bytes": 4658673903
+    },
+    {
+      "rank": 11,
+      "tensor_sha256": {
+        "0/fp32": "df8cc4b56e72be05d7db3a81c6e7ba2fdec737bb420e8b13a1818bc20f96b280",
+        "0/exp_avg": "d8a2d211eb7f4b5eca8cd61db7f2ef9b6152b57fead404e54e83ebd276dc6e4e",
+        "0/exp_avg_sq": "4a94b947ff22bd3bce66c7c2d32b1d621298e7905b8eef62253bbe1d1fb64bd5"
+      },
+      "bytes": 4658672431
+    },
+    {
+      "rank": 12,
+      "tensor_sha256": {
+        "0/fp32": "e587b1d100b7409d04d4dd828129d4e77dd32772d1d8be0ce1357dc63b3ef77a",
+        "0/exp_avg": "038a56e6d9156a21dc51b6a2143868faea38479956a36774c3b6ebad34e73e9c",
+        "0/exp_avg_sq": "edcc4ae0e871351e153b96eefeb925c3275266247a4c8ee1c9b2a4521800e587"
+      },
+      "bytes": 4658676207
+    },
+    {
+      "rank": 13,
+      "tensor_sha256": {
+        "0/fp32": "07c56700074fcdd9ae866bbe6ac3936073488fd0b283a6091ede18d8984c36de",
+        "0/exp_avg": "39b55fc80806c34d9d3ba63c4d600fa471e3d55344e665a2422628ce3ae657ee",
+        "0/exp_avg_sq": "fcb1c940ac132448615d7a7431ae13722fa9039b69f0649f5776eac70bb5438d"
+      },
+      "bytes": 4658690927
+    },
+    {
+      "rank": 14,
+      "tensor_sha256": {
+        "0/fp32": "74d304019197b763bf3d3fbf58aac6f9f4365cc1273271df478f515342aa0b3c",
+        "0/exp_avg": "fa9519f8824ea4252635ff7d5532d6d0ec5d754bb8c3e716cdea0f05e2cf4547",
+        "0/exp_avg_sq": "ea557dffa90521733c50db0486d9a54c4fb0583e2067ae2619599c17ee96c54e"
+      },
+      "bytes": 4658691503
+    },
+    {
+      "rank": 15,
+      "tensor_sha256": {
+        "0/fp32": "1b8dc00d860bc7cc45556e555dbaaa673ffe8ee2788d24a4585621d47f01f109",
+        "0/exp_avg": "51a0b469a6845e402e761b99f072d16e6eba77ea76c0536887630fda22c951df",
+        "0/exp_avg_sq": "b3e8f968cadcd2d026b3db22083281f750cb7278b97a7c7118870b75cba0dac4"
+      },
+      "bytes": 4658691887
+    }
+  ]
+}

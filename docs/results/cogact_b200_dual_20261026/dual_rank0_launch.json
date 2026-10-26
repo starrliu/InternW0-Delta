@@ -1,0 +1,19 @@
+{
+  "state": "running",
+  "supervisor_pid": 714594,
+  "launcher_pid": 718980,
+  "rank": 0,
+  "command": [
+    "bash",
+    "scripts/cogact_b200_dual_node.sh",
+    "+source_commit=bfd1d67b0dc3c01891abc6a0fb99978ca53ee8fb",
+    "+source_initial_commit=8e3994138af91c63976f86411202428b283a335d",
+    "+source_repository=https://github.com/starrliu/InternW0-Delta",
+    "+source_branch=cogact_baseline",
+    "+resume_from_step=80000"
+  ],
+  "source_commit": "bfd1d67b0dc3c01891abc6a0fb99978ca53ee8fb",
+  "resume_step": 80000,
+  "started_at": 1792979373.9315612,
+  "log": "/data/yuming/internw0-delta/runs/cogact/b200-joint-bs256-100k-20261023/train_dual_rank0.log"
+}

@@ -1,0 +1,32 @@
+{
+  "checked_at": 1792978923.599659,
+  "trainer_state": {
+    "global_step": 80000,
+    "epoch": 2,
+    "batch_in_epoch": 26146,
+    "step_tag": "step_080000",
+    "weights_path": "/data/yuming/internw0-delta/runs/cogact/b200-joint-bs256-100k-20261023/checkpoints/weights/slot_0.pt"
+  },
+  "file_sizes": {
+    "/data/yuming/internw0-delta/runs/cogact/b200-joint-bs256-100k-20261023/checkpoints/state/latest/scheduler.bin": 1657,
+    "/data/yuming/internw0-delta/runs/cogact/b200-joint-bs256-100k-20261023/checkpoints/state/latest/pytorch_model/mp_rank_00_model_states.pt": 24096053112,
+    "/data/yuming/internw0-delta/runs/cogact/b200-joint-bs256-100k-20261023/checkpoints/weights/slot_0.pt": 12423419414,
+    "/data/yuming/internw0-delta/runs/cogact/b200-joint-bs256-100k-20261023/checkpoints/state/latest/pytorch_model/bf16_zero_pp_rank_0_mp_rank_00_optim_states.pt": 9317343281,
+    "/data/yuming/internw0-delta/runs/cogact/b200-joint-bs256-100k-20261023/checkpoints/state/latest/pytorch_model/bf16_zero_pp_rank_1_mp_rank_00_optim_states.pt": 9317343153,
+    "/data/yuming/internw0-delta/runs/cogact/b200-joint-bs256-100k-20261023/checkpoints/state/latest/pytorch_model/bf16_zero_pp_rank_2_mp_rank_00_optim_states.pt": 9317343921,
+    "/data/yuming/internw0-delta/runs/cogact/b200-joint-bs256-100k-20261023/checkpoints/state/latest/pytorch_model/bf16_zero_pp_rank_3_mp_rank_00_optim_states.pt": 9317343537,
+    "/data/yuming/internw0-delta/runs/cogact/b200-joint-bs256-100k-20261023/checkpoints/state/latest/pytorch_model/bf16_zero_pp_rank_4_mp_rank_00_optim_states.pt": 9317342961,
+    "/data/yuming/internw0-delta/runs/cogact/b200-joint-bs256-100k-20261023/checkpoints/state/latest/pytorch_model/bf16_zero_pp_rank_5_mp_rank_00_optim_states.pt": 9317343473,
+    "/data/yuming/internw0-delta/runs/cogact/b200-joint-bs256-100k-20261023/checkpoints/state/latest/pytorch_model/bf16_zero_pp_rank_6_mp_rank_00_optim_states.pt": 9317364209,
+    "/data/yuming/internw0-delta/runs/cogact/b200-joint-bs256-100k-20261023/checkpoints/state/latest/pytorch_model/bf16_zero_pp_rank_7_mp_rank_00_optim_states.pt": 9317380529,
+    "/data/yuming/internw0-delta/runs/cogact/b200-joint-bs256-100k-20261023/checkpoints/state/latest/random_states_0.pkl": 16513,
+    "/data/yuming/internw0-delta/runs/cogact/b200-joint-bs256-100k-20261023/checkpoints/state/latest/random_states_1.pkl": 16513,
+    "/data/yuming/internw0-delta/runs/cogact/b200-joint-bs256-100k-20261023/checkpoints/state/latest/random_states_2.pkl": 16513,
+    "/data/yuming/internw0-delta/runs/cogact/b200-joint-bs256-100k-20261023/checkpoints/state/latest/random_states_3.pkl": 16577,
+    "/data/yuming/internw0-delta/runs/cogact/b200-joint-bs256-100k-20261023/checkpoints/state/latest/random_states_4.pkl": 16513,
+    "/data/yuming/internw0-delta/runs/cogact/b200-joint-bs256-100k-20261023/checkpoints/state/latest/random_states_5.pkl": 16513,
+    "/data/yuming/internw0-delta/runs/cogact/b200-joint-bs256-100k-20261023/checkpoints/state/latest/random_states_6.pkl": 16513,
+    "/data/yuming/internw0-delta/runs/cogact/b200-joint-bs256-100k-20261023/checkpoints/state/latest/random_states_7.pkl": 16513
+  },
+  "completion_log_seen": true
+}

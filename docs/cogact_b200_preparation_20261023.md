@@ -4,6 +4,10 @@
 InternW0-Delta-Base 的 CogACT 关节动作微调接口。正式训练已按文末的
 全局batch256、10万步方案启动，准备与短测记录保留如下。
 
+2026-10-26已在完整80,000步检查点后扩展至两个现有Pod、16张B200继续训练，
+全局batch仍为256；当前日志路径、恢复验证和实测见
+[双Pod切换记录](cogact_b200_dual_pod_20261026.md)。
+
 ## 已确认的边界
 
 - Kubernetes context `oidc@msr02`，namespace `bonete05`，Pod

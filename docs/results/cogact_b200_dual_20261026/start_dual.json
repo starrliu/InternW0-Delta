@@ -1,0 +1,11 @@
+{
+  "step": 80000,
+  "source_commit": "bfd1d67b0dc3c01891abc6a0fb99978ca53ee8fb",
+  "archive_sha256": "84cfb41af1b6a93aeb1e0c63480ad4817dd89bf6b7ca7117ddf1f9261060af89",
+  "created_at": 1792979372.903286,
+  "gpu_idle_verified_on_both_pods": true,
+  "pod_restarts": {
+    "liluo-agibot-1-server-0": 0,
+    "liluo-agibot-2-server-0": 0
+  }
+}

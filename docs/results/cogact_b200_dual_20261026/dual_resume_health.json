@@ -1,0 +1,727 @@
+{
+  "captured_at_utc": "2026-10-26T01:58:25.463546+00:00",
+  "status": "healthy_after_full_resume",
+  "training_code_commit": "bfd1d67b0dc3c01891abc6a0fb99978ca53ee8fb",
+  "resume_step": 80000,
+  "target_step": 100000,
+  "latest_step": 80140,
+  "latest_metrics_age_seconds": 18.948910236358643,
+  "topology": {
+    "nodes": 2,
+    "gpus_per_node": 8,
+    "world_size": 16,
+    "micro_batch_size": 16,
+    "gradient_accumulation": 1,
+    "effective_global_batch_size": 256
+  },
+  "save_every": 5000,
+  "source_checkpoint": "/data/yuming/internw0-delta/transition-20261026/state8-step80000",
+  "converted_checkpoint": "/data/yuming/internw0-delta/transition-20261026/state16-step80000",
+  "full_resume_log_evidence": [
+    "10/26 [01:50:44] [info] Accelerate training: distributed_type=DistributedType.DEEPSPEED zero_stage=2 world_size=16 process_index=0 cfg_mixed_precision=bf16 accelerator_mixed_precision=bf16 micro_batch=16 grad_accum=1 effective_global_batch=256 grad_clip=1.0000",
+    "10/26 [01:52:52] [info] [RANK 0] All model weights loaded successfully",
+    "10/26 [01:52:52] [info] [RANK 0] All optimizer states loaded successfully",
+    "10/26 [01:52:52] [info] [RANK 0] All scheduler states loaded successfully",
+    "10/26 [01:52:52] [info] [RANK 0] All dataloader sampler states loaded successfully",
+    "10/26 [01:52:52] [info] [RANK 0] All random states loaded successfully",
+    "10/26 [01:52:52] [info] Reseeded stochastic streams after GPU-count change: base_seed=1280042 rank=0",
+    "10/26 [01:52:52] [info] Restored dataloader progress: epoch=2 batch_in_epoch=26146 sample_offset=6693376",
+    "10/26 [01:52:54] [info] Restored full training state at step=80000 from /data/yuming/internw0-delta/transition-20261026/state16-step80000",
+    "10/26 [01:52:54] [info] Starting training with max_steps=100000."
+  ],
+  "latest_train_metrics": {
+    "step": 80140,
+    "epoch": 2,
+    "time_unix": 1792979886.5146356,
+    "train/loss": 0.07789028435945511,
+    "train/grad_norm": 0.04925783723592758,
+    "train/lr": 5.648602117030238e-06,
+    "performance/steps_per_sec": 0.5450956577126608,
+    "performance/optimizer_steps_per_sec": 0.5450956577126608,
+    "performance/samples_per_sec": 139.54448837444116,
+    "performance/effective_global_batch_size": 256,
+    "train/loss_action": 0.001153100747615099,
+    "train/loss_future_delta": 0.020830819383263588,
+    "train/loss_semantic_future": 0.014959714375436306,
+    "train/loss_video": 0.04094664752483368
+  },
+  "observed_train_metrics": [
+    {
+      "step": 80010,
+      "epoch": 2,
+      "time_unix": 1792979625.3651953,
+      "train/loss": 0.08396546542644501,
+      "train/grad_norm": 0.04091859236359596,
+      "train/lr": 5.713746328682319e-06,
+      "performance/steps_per_sec": 0.1978204263586063,
+      "performance/optimizer_steps_per_sec": 0.1978204263586063,
+      "performance/samples_per_sec": 50.642029147803214,
+      "performance/effective_global_batch_size": 256,
+      "train/loss_action": 0.001125197159126401,
+      "train/loss_future_delta": 0.022475093603134155,
+      "train/loss_semantic_future": 0.01486467570066452,
+      "train/loss_video": 0.045500498265028
+    },
+    {
+      "step": 80020,
+      "epoch": 2,
+      "time_unix": 1792979645.8314066,
+      "train/loss": 0.07662435621023178,
+      "train/grad_norm": 0.05494340881705284,
+      "train/lr": 5.708722401380884e-06,
+      "performance/steps_per_sec": 0.48852588228062377,
+      "performance/optimizer_steps_per_sec": 0.48852588228062377,
+      "performance/samples_per_sec": 125.06262586383968,
+      "performance/effective_global_batch_size": 256,
+      "train/loss_action": 0.0014708673115819693,
+      "train/loss_future_delta": 0.02267378754913807,
+      "train/loss_semantic_future": 0.015032760798931122,
+      "train/loss_video": 0.03744693845510483
+    },
+    {
+      "step": 80030,
+      "epoch": 2,
+      "time_unix": 1792979663.9534726,
+      "train/loss": 0.07444526255130768,
+      "train/grad_norm": 0.04239039495587349,
+      "train/lr": 5.703700611084196e-06,
+      "performance/steps_per_sec": 0.5517749189580101,
+      "performance/optimizer_steps_per_sec": 0.5517749189580101,
+      "performance/samples_per_sec": 141.2543792532506,
+      "performance/effective_global_batch_size": 256,
+      "train/loss_action": 0.0010478287003934383,
+      "train/loss_future_delta": 0.020785016939044,
+      "train/loss_semantic_future": 0.01399039663374424,
+      "train/loss_video": 0.03862202167510986
+    },
+    {
+      "step": 80040,
+      "epoch": 2,
+      "time_unix": 1792979692.6040914,
+      "train/loss": 0.07059556245803833,
+      "train/grad_norm": 0.07351349294185638,
+      "train/lr": 5.698680958341413e-06,
+      "performance/steps_per_sec": 0.3490100332888347,
+      "performance/optimizer_steps_per_sec": 0.3490100332888347,
+      "performance/samples_per_sec": 89.34656852194168,
+      "performance/effective_global_batch_size": 256,
+      "train/loss_action": 0.0012269807048141956,
+      "train/loss_future_delta": 0.02134016528725624,
+      "train/loss_semantic_future": 0.014952601864933968,
+      "train/loss_video": 0.03307581692934036
+    },
+    {
+      "step": 80050,
+      "epoch": 2,
+      "time_unix": 1792979717.4956112,
+      "train/loss": 0.08214165270328522,
+      "train/grad_norm": 0.04357372224330902,
+      "train/lr": 5.693663443701486e-06,
+      "performance/steps_per_sec": 0.40176963947897215,
+      "performance/optimizer_steps_per_sec": 0.40176963947897215,
+      "performance/samples_per_sec": 102.85302770661687,
+      "performance/effective_global_batch_size": 256,
+      "train/loss_action": 0.0012772795744240284,
+      "train/loss_future_delta": 0.02154887281358242,
+      "train/loss_semantic_future": 0.01366067212074995,
+      "train/loss_video": 0.04565483331680298
+    },
+    {
+      "step": 80060,
+      "epoch": 2,
+      "time_unix": 1792979735.233743,
+      "train/loss": 0.07081212103366852,
+      "train/grad_norm": 0.058776624500751495,
+      "train/lr": 5.688648067713122e-06,
+      "performance/steps_per_sec": 0.5637320872950378,
+      "performance/optimizer_steps_per_sec": 0.5637320872950378,
+      "performance/samples_per_sec": 144.31541434752967,
+      "performance/effective_global_batch_size": 256,
+      "train/loss_action": 0.0017745190998539329,
+      "train/loss_future_delta": 0.022915644571185112,
+      "train/loss_semantic_future": 0.01492264587432146,
+      "train/loss_video": 0.03119930624961853
+    },
+    {
+      "step": 80070,
+      "epoch": 2,
+      "time_unix": 1792979757.0022604,
+      "train/loss": 0.0727863535284996,
+      "train/grad_norm": 0.05538852885365486,
+      "train/lr": 5.683634830924803e-06,
+      "performance/steps_per_sec": 0.4593857719138892,
+      "performance/optimizer_steps_per_sec": 0.4593857719138892,
+      "performance/samples_per_sec": 117.60275760995563,
+      "performance/effective_global_batch_size": 256,
+      "train/loss_action": 0.0013416800647974014,
+      "train/loss_future_delta": 0.021863337606191635,
+      "train/loss_semantic_future": 0.01433807797729969,
+      "train/loss_video": 0.03524325415492058
+    },
+    {
+      "step": 80080,
+      "epoch": 2,
+      "time_unix": 1792979775.6286173,
+      "train/loss": 0.07426231354475021,
+      "train/grad_norm": 0.04579240828752518,
+      "train/lr": 5.678623733884752e-06,
+      "performance/steps_per_sec": 0.5369110985608317,
+      "performance/optimizer_steps_per_sec": 0.5369110985608317,
+      "performance/samples_per_sec": 137.44924123157293,
+      "performance/effective_global_batch_size": 256,
+      "train/loss_action": 0.0012276878114789724,
+      "train/loss_future_delta": 0.021761754527688026,
+      "train/loss_semantic_future": 0.013980917632579803,
+      "train/loss_video": 0.03729195147752762
+    },
+    {
+      "step": 80090,
+      "epoch": 2,
+      "time_unix": 1792979793.8509448,
+      "train/loss": 0.07450707256793976,
+      "train/grad_norm": 0.042017266154289246,
+      "train/lr": 5.673614777140993e-06,
+      "performance/steps_per_sec": 0.5487722374760242,
+      "performance/optimizer_steps_per_sec": 0.5487722374760242,
+      "performance/samples_per_sec": 140.4856927938622,
+      "performance/effective_global_batch_size": 256,
+      "train/loss_action": 0.001086398959159851,
+      "train/loss_future_delta": 0.02113795280456543,
+      "train/loss_semantic_future": 0.014529707841575146,
+      "train/loss_video": 0.037753015756607056
+    },
+    {
+      "step": 80100,
+      "epoch": 2,
+      "time_unix": 1792979815.348699,
+      "train/loss": 0.07815263420343399,
+      "train/grad_norm": 0.049812812358140945,
+      "train/lr": 5.6686079612412805e-06,
+      "performance/steps_per_sec": 0.4651241297932242,
+      "performance/optimizer_steps_per_sec": 0.4651241297932242,
+      "performance/samples_per_sec": 119.0717772270654,
+      "performance/effective_global_batch_size": 256,
+      "train/loss_action": 0.0013273764634504914,
+      "train/loss_future_delta": 0.021319765597581863,
+      "train/loss_semantic_future": 0.014873022213578224,
+      "train/loss_video": 0.040632475167512894
+    },
+    {
+      "step": 80110,
+      "epoch": 2,
+      "time_unix": 1792979833.1182323,
+      "train/loss": 0.07339361310005188,
+      "train/grad_norm": 0.048733729869127274,
+      "train/lr": 5.663603286733171e-06,
+      "performance/steps_per_sec": 0.5627892740288323,
+      "performance/optimizer_steps_per_sec": 0.5627892740288323,
+      "performance/samples_per_sec": 144.07405415138106,
+      "performance/effective_global_batch_size": 256,
+      "train/loss_action": 0.0012913993559777737,
+      "train/loss_future_delta": 0.022394947707653046,
+      "train/loss_semantic_future": 0.013736993074417114,
+      "train/loss_video": 0.03597027808427811
+    },
+    {
+      "step": 80120,
+      "epoch": 2,
+      "time_unix": 1792979850.728394,
+      "train/loss": 0.07081491500139236,
+      "train/grad_norm": 0.04434346780180931,
+      "train/lr": 5.6586007541639495e-06,
+      "performance/steps_per_sec": 0.568390027260081,
+      "performance/optimizer_steps_per_sec": 0.568390027260081,
+      "performance/samples_per_sec": 145.50784697858074,
+      "performance/effective_global_batch_size": 256,
+      "train/loss_action": 0.0012671563308686018,
+      "train/loss_future_delta": 0.020227162167429924,
+      "train/loss_semantic_future": 0.015611539594829082,
+      "train/loss_video": 0.03370906040072441
+    },
+    {
+      "step": 80130,
+      "epoch": 2,
+      "time_unix": 1792979868.1648412,
+      "train/loss": 0.07217194139957428,
+      "train/grad_norm": 0.044188182801008224,
+      "train/lr": 5.653600364080691e-06,
+      "performance/steps_per_sec": 0.572998504922998,
+      "performance/optimizer_steps_per_sec": 0.572998504922998,
+      "performance/samples_per_sec": 146.68761726028748,
+      "performance/effective_global_batch_size": 256,
+      "train/loss_action": 0.0011809032876044512,
+      "train/loss_future_delta": 0.021109767258167267,
+      "train/loss_semantic_future": 0.015722937881946564,
+      "train/loss_video": 0.03415833041071892
+    },
+    {
+      "step": 80140,
+      "epoch": 2,
+      "time_unix": 1792979886.5146356,
+      "train/loss": 0.07789028435945511,
+      "train/grad_norm": 0.04925783723592758,
+      "train/lr": 5.648602117030238e-06,
+      "performance/steps_per_sec": 0.5450956577126608,
+      "performance/optimizer_steps_per_sec": 0.5450956577126608,
+      "performance/samples_per_sec": 139.54448837444116,
+      "performance/effective_global_batch_size": 256,
+      "train/loss_action": 0.001153100747615099,
+      "train/loss_future_delta": 0.020830819383263588,
+      "train/loss_semantic_future": 0.014959714375436306,
+      "train/loss_video": 0.04094664752483368
+    }
+  ],
+  "post_warmup_timing": {
+    "method": "Wall-clock difference from the step 80010 metric to the latest metric; excludes the initial 10 resumed steps, retains all subsequent waits and slow intervals.",
+    "start_step": 80010,
+    "end_step": 80140,
+    "elapsed_seconds": 261.1494402885437,
+    "seconds_per_optimizer_step": 2.008841848373413,
+    "samples_per_second": 127.43661239797783,
+    "remaining_training_hours_excluding_future_checkpoint_eval_overhead": 11.082110863526662,
+    "interval_loss_min": 0.07059556245803833,
+    "interval_loss_max": 0.08396546542644501
+  },
+  "all_recorded_losses_and_gradients_finite": true,
+  "gpu_metrics": [
+    {
+      "step": 80140,
+      "rank": 0,
+      "peak_allocated_bytes": 60632183296,
+      "peak_reserved_bytes": 77187776512,
+      "allocated_bytes": 23185394176,
+      "reserved_bytes": 77187776512
+    },
+    {
+      "step": 80140,
+      "rank": 1,
+      "peak_allocated_bytes": 60632183296,
+      "peak_reserved_bytes": 77187776512,
+      "allocated_bytes": 23185394176,
+      "reserved_bytes": 77187776512
+    },
+    {
+      "step": 80140,
+      "rank": 2,
+      "peak_allocated_bytes": 60632183296,
+      "peak_reserved_bytes": 77187776512,
+      "allocated_bytes": 23185394176,
+      "reserved_bytes": 77187776512
+    },
+    {
+      "step": 80140,
+      "rank": 3,
+      "peak_allocated_bytes": 60632183296,
+      "peak_reserved_bytes": 77187776512,
+      "allocated_bytes": 23185394176,
+      "reserved_bytes": 77187776512
+    },
+    {
+      "step": 80140,
+      "rank": 4,
+      "peak_allocated_bytes": 60632183296,
+      "peak_reserved_bytes": 77187776512,
+      "allocated_bytes": 23185394176,
+      "reserved_bytes": 77187776512
+    },
+    {
+      "step": 80140,
+      "rank": 5,
+      "peak_allocated_bytes": 60632183296,
+      "peak_reserved_bytes": 77187776512,
+      "allocated_bytes": 23185394176,
+      "reserved_bytes": 77187776512
+    },
+    {
+      "step": 80140,
+      "rank": 6,
+      "peak_allocated_bytes": 60632183296,
+      "peak_reserved_bytes": 77187776512,
+      "allocated_bytes": 23185394176,
+      "reserved_bytes": 77187776512
+    },
+    {
+      "step": 80140,
+      "rank": 7,
+      "peak_allocated_bytes": 60632183296,
+      "peak_reserved_bytes": 77187776512,
+      "allocated_bytes": 23185394176,
+      "reserved_bytes": 77187776512
+    },
+    {
+      "step": 80140,
+      "rank": 8,
+      "peak_allocated_bytes": 60632183296,
+      "peak_reserved_bytes": 77187776512,
+      "allocated_bytes": 23185394176,
+      "reserved_bytes": 77187776512
+    },
+    {
+      "step": 80140,
+      "rank": 9,
+      "peak_allocated_bytes": 60632183296,
+      "peak_reserved_bytes": 77187776512,
+      "allocated_bytes": 23185394176,
+      "reserved_bytes": 77187776512
+    },
+    {
+      "step": 80140,
+      "rank": 10,
+      "peak_allocated_bytes": 60632183296,
+      "peak_reserved_bytes": 77187776512,
+      "allocated_bytes": 23185394176,
+      "reserved_bytes": 77187776512
+    },
+    {
+      "step": 80140,
+      "rank": 11,
+      "peak_allocated_bytes": 60632183296,
+      "peak_reserved_bytes": 77187776512,
+      "allocated_bytes": 23185394176,
+      "reserved_bytes": 77187776512
+    },
+    {
+      "step": 80140,
+      "rank": 12,
+      "peak_allocated_bytes": 60632183296,
+      "peak_reserved_bytes": 77187776512,
+      "allocated_bytes": 23185394176,
+      "reserved_bytes": 77187776512
+    },
+    {
+      "step": 80140,
+      "rank": 13,
+      "peak_allocated_bytes": 60632183296,
+      "peak_reserved_bytes": 77187776512,
+      "allocated_bytes": 23185394176,
+      "reserved_bytes": 77187776512
+    },
+    {
+      "step": 80140,
+      "rank": 14,
+      "peak_allocated_bytes": 60632183296,
+      "peak_reserved_bytes": 77187776512,
+      "allocated_bytes": 23185394176,
+      "reserved_bytes": 77187776512
+    },
+    {
+      "step": 80140,
+      "rank": 15,
+      "peak_allocated_bytes": 60632183296,
+      "peak_reserved_bytes": 77187776512,
+      "allocated_bytes": 23185394176,
+      "reserved_bytes": 77187776512
+    }
+  ],
+  "gpu_peak_memory_gib_ranges": {
+    "peak_allocated_bytes": [
+      56.46812105178833,
+      56.46812105178833
+    ],
+    "peak_reserved_bytes": [
+      71.88671875,
+      71.88671875
+    ]
+  },
+  "pod_lifecycle": [
+    {
+      "name": "liluo-agibot-2-server-0",
+      "uid": "5fde22f7-a4fe-4e54-ba39-00b4b7f23839",
+      "phase": "Running",
+      "node": "slc01-cl02-hgx-0061",
+      "podIP": "10.45.152.131",
+      "creation": "2026-10-19T08:48:09Z",
+      "containers": [
+        {
+          "name": "server",
+          "restarts": 0,
+          "ready": true,
+          "state": {
+            "running": {
+              "startedAt": "2026-10-21T20:20:41Z"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "liluo-agibot-1-server-0",
+      "uid": "4ea6dfed-7d98-4c7e-88e1-430a6353583a",
+      "phase": "Running",
+      "node": "slc01-cl02-hgx-0034",
+      "podIP": "10.44.59.231",
+      "creation": "2026-10-19T05:38:47Z",
+      "containers": [
+        {
+          "name": "server",
+          "restarts": 0,
+          "ready": true,
+          "state": {
+            "running": {
+              "startedAt": "2026-10-20T10:08:30Z"
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "gpu_process_snapshots": [
+    {
+      "pod": "liluo-agibot-2-server-0",
+      "captured_at": 1792979857.4732387,
+      "pid1": "sleep",
+      "gpus": [
+        {
+          "index": 0,
+          "memory_used_mib": 78316,
+          "memory_total_mib": 183359,
+          "utilization_percent": 98
+        },
+        {
+          "index": 1,
+          "memory_used_mib": 78318,
+          "memory_total_mib": 183359,
+          "utilization_percent": 98
+        },
+        {
+          "index": 2,
+          "memory_used_mib": 78318,
+          "memory_total_mib": 183359,
+          "utilization_percent": 98
+        },
+        {
+          "index": 3,
+          "memory_used_mib": 78316,
+          "memory_total_mib": 183359,
+          "utilization_percent": 98
+        },
+        {
+          "index": 4,
+          "memory_used_mib": 78316,
+          "memory_total_mib": 183359,
+          "utilization_percent": 98
+        },
+        {
+          "index": 5,
+          "memory_used_mib": 78318,
+          "memory_total_mib": 183359,
+          "utilization_percent": 98
+        },
+        {
+          "index": 6,
+          "memory_used_mib": 78318,
+          "memory_total_mib": 183359,
+          "utilization_percent": 98
+        },
+        {
+          "index": 7,
+          "memory_used_mib": 78316,
+          "memory_total_mib": 183359,
+          "utilization_percent": 98
+        }
+      ],
+      "gpu_worker_pids": [
+        719036,
+        719037,
+        719038,
+        719039,
+        719040,
+        719041,
+        719042,
+        719043
+      ]
+    },
+    {
+      "pod": "liluo-agibot-1-server-0",
+      "captured_at": 1792979857.2460835,
+      "pid1": "sleep",
+      "gpus": [
+        {
+          "index": 0,
+          "memory_used_mib": 78318,
+          "memory_total_mib": 183359,
+          "utilization_percent": 100
+        },
+        {
+          "index": 1,
+          "memory_used_mib": 78316,
+          "memory_total_mib": 183359,
+          "utilization_percent": 78
+        },
+        {
+          "index": 2,
+          "memory_used_mib": 78318,
+          "memory_total_mib": 183359,
+          "utilization_percent": 0
+        },
+        {
+          "index": 3,
+          "memory_used_mib": 78318,
+          "memory_total_mib": 183359,
+          "utilization_percent": 100
+        },
+        {
+          "index": 4,
+          "memory_used_mib": 78318,
+          "memory_total_mib": 183359,
+          "utilization_percent": 100
+        },
+        {
+          "index": 5,
+          "memory_used_mib": 78316,
+          "memory_total_mib": 183359,
+          "utilization_percent": 70
+        },
+        {
+          "index": 6,
+          "memory_used_mib": 78318,
+          "memory_total_mib": 183359,
+          "utilization_percent": 74
+        },
+        {
+          "index": 7,
+          "memory_used_mib": 78318,
+          "memory_total_mib": 183359,
+          "utilization_percent": 100
+        }
+      ],
+      "gpu_worker_pids": [
+        2731441,
+        2731442,
+        2731443,
+        2731444,
+        2731445,
+        2731446,
+        2731447,
+        2731448
+      ]
+    }
+  ],
+  "wandb": {
+    "url": "https://wandb.ai/xymliu/cogact_baseline/runs/cgb200-20261023-100k",
+    "state": "running",
+    "config": {
+      "batch_size": 16,
+      "max_steps": 100000,
+      "save_every": 5000,
+      "eval_loss_samples_per_rank": 1,
+      "source_commit": "bfd1d67b0dc3c01891abc6a0fb99978ca53ee8fb",
+      "resume_from_step": 80000
+    },
+    "resumed_history": [
+      {
+        "_step": 80010,
+        "train/loss": 0.08396546542644501,
+        "train/grad_norm": 0.04091859236359596
+      },
+      {
+        "_step": 80020,
+        "train/loss": 0.07662435621023178,
+        "train/grad_norm": 0.05494340881705284
+      },
+      {
+        "_step": 80030,
+        "train/loss": 0.07444526255130768,
+        "train/grad_norm": 0.04239039495587349
+      },
+      {
+        "_step": 80040,
+        "train/loss": 0.07059556245803833,
+        "train/grad_norm": 0.07351349294185638
+      },
+      {
+        "_step": 80050,
+        "train/loss": 0.08214165270328522,
+        "train/grad_norm": 0.04357372224330902
+      },
+      {
+        "_step": 80060,
+        "train/loss": 0.07081212103366852,
+        "train/grad_norm": 0.058776624500751495
+      },
+      {
+        "_step": 80070,
+        "train/loss": 0.0727863535284996,
+        "train/grad_norm": 0.05538852885365486
+      },
+      {
+        "_step": 80080,
+        "train/loss": 0.07426231354475021,
+        "train/grad_norm": 0.04579240828752518
+      },
+      {
+        "_step": 80090,
+        "train/loss": 0.07450707256793976,
+        "train/grad_norm": 0.042017266154289246
+      },
+      {
+        "_step": 80100,
+        "train/loss": 0.07815263420343399,
+        "train/grad_norm": 0.049812812358140945
+      },
+      {
+        "_step": 80110,
+        "train/loss": 0.07339361310005188,
+        "train/grad_norm": 0.048733729869127274
+      },
+      {
+        "_step": 80120,
+        "train/loss": 0.07081491500139236,
+        "train/grad_norm": 0.04434346780180931
+      },
+      {
+        "_step": 80130,
+        "train/loss": 0.07217194139957428,
+        "train/grad_norm": 0.044188182801008224
+      }
+    ]
+  },
+  "launches": [
+    {
+      "state": "running",
+      "supervisor_pid": 714594,
+      "launcher_pid": 718980,
+      "rank": 0,
+      "command": [
+        "bash",
+        "scripts/cogact_b200_dual_node.sh",
+        "+source_commit=bfd1d67b0dc3c01891abc6a0fb99978ca53ee8fb",
+        "+source_initial_commit=8e3994138af91c63976f86411202428b283a335d",
+        "+source_repository=https://github.com/starrliu/InternW0-Delta",
+        "+source_branch=cogact_baseline",
+        "+resume_from_step=80000"
+      ],
+      "source_commit": "bfd1d67b0dc3c01891abc6a0fb99978ca53ee8fb",
+      "resume_step": 80000,
+      "started_at": 1792979373.9315612,
+      "log": "/data/yuming/internw0-delta/runs/cogact/b200-joint-bs256-100k-20261023/train_dual_rank0.log"
+    },
+    {
+      "state": "running",
+      "supervisor_pid": 2729181,
+      "launcher_pid": 2731395,
+      "rank": 1,
+      "command": [
+        "bash",
+        "scripts/cogact_b200_dual_node.sh",
+        "+source_commit=bfd1d67b0dc3c01891abc6a0fb99978ca53ee8fb",
+        "+source_initial_commit=8e3994138af91c63976f86411202428b283a335d",
+        "+source_repository=https://github.com/starrliu/InternW0-Delta",
+        "+source_branch=cogact_baseline",
+        "+resume_from_step=80000"
+      ],
+      "source_commit": "bfd1d67b0dc3c01891abc6a0fb99978ca53ee8fb",
+      "resume_step": 80000,
+      "started_at": 1792979373.980339,
+      "log": "/data/yuming/internw0-delta/runs/cogact/b200-joint-bs256-100k-20261023/train_dual_rank1.log"
+    }
+  ],
+  "logs": [
+    "/data/yuming/internw0-delta/runs/cogact/b200-joint-bs256-100k-20261023/train_dual_rank0.log",
+    "/data/yuming/internw0-delta/runs/cogact/b200-joint-bs256-100k-20261023/train_dual_rank1.log"
+  ],
+  "limitations": [
+    "Short post-resume observation; future data loading, evaluation and checkpoint overhead can change throughput.",
+    "GPU-count change uses deterministically reseeded per-rank RNG streams; this is not bitwise-equivalent to an uninterrupted 8-GPU run."
+  ]
+}
