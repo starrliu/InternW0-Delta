@@ -14,7 +14,7 @@ import torch
 from wam.datasets.cogact_joint import JOINT_INDICES, compact_state, scatter80
 from wam.datasets.cogact_video import canvas
 from wam.inference.cogact_policy import (
-    CogACTNormalizer, CogACTPolicy, prepare_observation, read_run,
+    CogACTNormalizer, CogACTPolicy, place_model, prepare_observation, read_run,
 )
 from wam.inference.robotcontrol_server import PolicyService, action_response, create_app, parse_payload
 
@@ -130,6 +130,49 @@ def test_no_rtc_and_model_input_contract(normalizer, images, payload, monkeypatc
     assert seen["action_horizon"] == 32 and seen["num_inference_steps"] == 10
     assert "rtc_guidance" not in seen and "rtc_prefix_condition" not in seen
     assert "Pick up the cup." in seen["understanding_prompt"]
+
+
+def test_separate_text_device_preserves_prompt_encoding(normalizer, images, payload, monkeypatch):
+    from wam.model.world_action_model import WAM
+    contexts = []
+    class TextEncoder(torch.nn.Module):
+        def forward(self, ids, mask):
+            return ids[..., None].float().expand(-1, -1, 4096)
+    class Model:
+        device = torch.device("cpu")
+        text_encoder = TextEncoder()
+        tokenizer = staticmethod(lambda *args, **kwargs: (torch.tensor([[2, 3, 99]]), torch.tensor([[1, 1, 0]])))
+        encode_prompt = WAM.encode_prompt
+
+    def infer(model, **kwargs):
+        contexts.append((kwargs["context"].clone(), kwargs["context_mask"].clone()))
+        return {"action": torch.zeros(1, 32, 80)}
+    monkeypatch.setattr("wam.inference.online_action_policy.infer_online_action_chunk", infer)
+    for device in (None, "cpu"):
+        PolicyService(CogACTPolicy(Model(), normalizer, text_device=device)).process(images, payload, now=1)
+    for standard, separate in zip(contexts[0], contexts[1]):
+        torch.testing.assert_close(standard, separate, rtol=0, atol=0)
+    assert contexts[1][0][:, -1].count_nonzero() == 0
+    assert contexts[1][1].all()
+
+
+def test_device_placement_updates_plain_vae_and_vlm_attributes():
+    model = torch.nn.Module()
+    model.torch_dtype = torch.bfloat16
+    model.mot = torch.nn.Linear(2, 2)
+    model.text_encoder = torch.nn.Linear(2, 2)
+    model.vae = torch.nn.Linear(2, 2)
+    model.vae.mean = torch.tensor([1., 2.])
+    model.vae.std = torch.tensor([2., 4.])
+    model.understanding = torch.nn.Module()
+    model.understanding.vlm = torch.nn.Linear(2, 2)
+    place_model(model, "cpu", "cpu", "cpu")
+    assert all(p.dtype == torch.bfloat16 for p in model.parameters())
+    assert model.vae.mean.dtype == model.vae.std.dtype == torch.bfloat16
+    assert model.vae.scale[0] is model.vae.mean
+    torch.testing.assert_close(model.vae.scale[1], 1 / model.vae.std)
+    assert model.understanding.vlm.device == model.device == torch.device("cpu")
+    assert model.understanding.vlm.dtype == model.torch_dtype
 
 
 def test_http_contract_validation_reset_and_busy(normalizer, images, payload):

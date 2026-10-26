@@ -176,9 +176,10 @@ def read_run(args):
 
 
 class CogACTPolicy:
-    def __init__(self, model, normalizer, *, denoise_steps=10, seed=42, tiled=False):
+    def __init__(self, model, normalizer, *, denoise_steps=10, seed=42, tiled=False, text_device=None):
         self.model, self.normalizer = model, normalizer
         self.denoise_steps, self.seed, self.tiled = denoise_steps, seed, tiled
+        self.text_device = None if text_device is None else torch.device(text_device)
         self.action_dim_is_pad = scatter80(torch.zeros(16))[1]
         self.text = {}
 
@@ -187,7 +188,15 @@ class CogACTPolicy:
         from wam.inference.online_action_policy import infer_online_action_chunk
         prompt = DEFAULT_PROMPT.format(task=instruction)
         if prompt not in self.text:
-            self.text = {prompt: self.model.encode_prompt(prompt)}
+            if self.text_device is None:
+                encoded = self.model.encode_prompt(prompt)
+            else:
+                ids, mask = self.model.tokenizer(prompt, return_mask=True, add_special_tokens=True)
+                ids = ids.to(self.text_device)
+                mask = mask.to(device=self.text_device, dtype=torch.bool)
+                context = self.model.text_encoder(ids, mask).masked_fill(~mask.unsqueeze(-1), 0)
+                encoded = context, torch.ones_like(mask)
+            self.text = {prompt: encoded}
         context, mask = self.text[prompt]
         action = infer_online_action_chunk(
             self.model, prompt=None, context=context, context_mask=mask,
@@ -205,7 +214,34 @@ def load_policy(args, prepared):
     from wam.training.checkpoint import load_wam_checkpoint_strict
     cfg, normalizer, path, _ = prepared
     dtype = {"bf16": torch.bfloat16, "fp16": torch.float16, "no": torch.float32}[args.precision]
-    model = instantiate(cfg.model, model_dtype=dtype, device=args.device).to(args.device).eval()
+    encoder_device = getattr(args, "encoder_device", None)
+    text_device = getattr(args, "text_device", None)
+    split = encoder_device is not None or text_device is not None
+    # Loading on CPU first avoids briefly placing all frozen backbones on a
+    # 16-GiB policy GPU before they can be distributed across devices.
+    model = instantiate(cfg.model, model_dtype=dtype, device="cpu" if split else args.device).eval()
     load_wam_checkpoint_strict(model, path)
+    if split:
+        place_model(model, args.device, encoder_device or args.device, text_device or args.device)
+    else:
+        model.to(args.device)
     model.requires_grad_(False)
-    return CogACTPolicy(model, normalizer, denoise_steps=args.denoise_steps, seed=args.seed, tiled=args.tiled)
+    return CogACTPolicy(model, normalizer, denoise_steps=args.denoise_steps, seed=args.seed,
+                        tiled=args.tiled, text_device=text_device)
+
+
+def place_model(model, policy_device, encoder_device, text_device):
+    """Place complete BF16 modules; no quantization or weights are changed."""
+    model.device = torch.device(policy_device)
+    for name, module in model.named_children():
+        device = text_device if name == "text_encoder" else encoder_device if name == "understanding" else policy_device
+        module.to(device=device, dtype=model.torch_dtype)
+    # These are plain attributes rather than registered buffers.
+    for name in ("mean", "std"):
+        if torch.is_tensor(getattr(model.vae, name, None)):
+            setattr(model.vae, name, getattr(model.vae, name).to(device=policy_device, dtype=model.torch_dtype))
+    if hasattr(model.vae, "mean") and hasattr(model.vae, "std"):
+        model.vae.scale = [model.vae.mean, 1.0 / model.vae.std]
+    if model.understanding is not None:
+        model.understanding.vlm.device = torch.device(encoder_device)
+        model.understanding.vlm.dtype = model.torch_dtype

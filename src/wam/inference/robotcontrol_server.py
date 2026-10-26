@@ -192,6 +192,8 @@ def main():
     parser.add_argument("--host", default="0.0.0.0")
     parser.add_argument("--port", type=int, default=5509)
     parser.add_argument("--device", default="cuda:0")
+    parser.add_argument("--encoder-device", help="Optional separate device for frozen RynnBrain, e.g. cuda:0")
+    parser.add_argument("--text-device", help="Optional T5 device, e.g. cpu to save GPU memory")
     parser.add_argument("--precision", choices=("bf16", "fp16", "no"), default="bf16")
     parser.add_argument("--denoise-steps", type=int, default=10)
     parser.add_argument("--seed", type=int, default=42)
@@ -206,6 +208,8 @@ def main():
     from .cogact_policy import load_policy, read_run
     logging.basicConfig(level=logging.INFO)
     prepared = read_run(args)
+    prepared[-1].update(policy_device=args.device, encoder_device=args.encoder_device or args.device,
+                        text_device=args.text_device or args.device)
     print(json.dumps(prepared[-1], indent=2), flush=True)
     if args.check_config:
         return

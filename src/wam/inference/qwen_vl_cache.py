@@ -40,6 +40,10 @@ def _get_online_vlm_pack(
         ),
     )
     if vlm_pack is not None:
+        # A frozen VLM may live on a second inference GPU. Move its output
+        # before concatenating state tokens from the policy GPU.
+        vlm_pack["vlm_context"] = vlm_pack["vlm_context"].to(device=model.device, dtype=model.torch_dtype)
+        vlm_pack["vlm_mask"] = vlm_pack["vlm_mask"].to(device=model.device, dtype=torch.bool)
         vlm_context, vlm_mask = append_proprio_to_context(
             model,
             context=vlm_pack["vlm_context"],

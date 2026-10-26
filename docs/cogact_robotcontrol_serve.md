@@ -2,7 +2,7 @@
 
 `scripts/serve_robotcontrol.sh` 启动一个 HTTP 模型服务，接收三路图像、任务指令及当前关节/夹爪状态，返回 **32 步双臂绝对关节目标**。机器人读取、动作规划和执行仍由 RobotControl-G1 负责。RTC 关闭。
 
-对接依据为 [RobotControl-G1](https://github.com/msraeai/RobotControl-G1/tree/b37c68391ec4a9ffcf6e6d08ceeb16c1f9f3ff20) 的 `g1_platform/policy/cogact.py`、`perception/state_builder.py` 和 `action/interpreter.py`。原有 CogACT HTTP 客户端无需修改，只需切换输入/输出格式。
+对接依据为 [RobotControl-G1](https://github.com/msraeai/RobotControl-G1/tree/b37c68391ec4a9ffcf6e6d08ceeb16c1f9f3ff20) 的 `g1_platform/policy/cogact.py`、`perception/state_builder.py` 和 `action/interpreter.py`。原有 CogACT HTTP 客户端切换输入/输出格式后可收发动作；若要匹配训练的历史观测和回合边界，还需按下文接入帧号、历史观测和重置。
 
 ## 启动模型服务
 
@@ -25,13 +25,15 @@ bash scripts/serve_robotcontrol.sh \
   --port 5509
 ```
 
-服务使用一张 GPU，默认 BF16、SDPA attention、10 次去噪。先在同一命令末尾加 `--check-config` 可仅用 CPU 核对配置、权重 step 和归一化；不会加载 GPU 模型。`WAM_PYTHON` 可指定其他虚拟环境解释器。
+服务默认使用一张 GPU，采用 BF16、SDPA attention、10 次去噪。先在同一命令末尾加 `--check-config` 可仅用 CPU 核对配置、权重 step 和归一化；不会加载 GPU 模型。`WAM_PYTHON` 可指定其他虚拟环境解释器。
+
+可选 `--text-device cpu` 将 T5 文本编码器放在 CPU，按指令缓存编码结果，减少 GPU 显存占用。`--encoder-device cuda:1` 可将冻结的 RynnBrain 放到另一张可见 GPU；`--device cuda:0` 指定策略模型所在 GPU。拆分设备时先在 CPU 加载权重，再移动完整模块，不使用量化。单张 5090 的显存容量和速度、跨 GPU 运行均尚未实测。
 
 `latest` 根据训练的 `weights_manifest.json` 选择已完成的权重，启动时固定加载一次，不自动热更新。也可用 `--checkpoint /path/to/completed_policy.pt` 指定独立副本。训练权重 `slot_N.pt` 会循环覆盖；需要固定版本时应保留独立文件。服务读取的是策略 `.pt`，不是 DeepSpeed 优化器状态目录。
 
 模型加载时严格检查全部可训练模块；冻结的 Wan VAE、T5 和 RynnBrain 从 `--model-root` / `--vlm-path` 加载。归一化必须来自该 checkpoint 对应的数据准备目录；若原目录仍可访问，还会核对其完成标记与 SHA256。迁移到其他机器时一起复制 `config.yaml`、权重和匹配的 `normalization.json`。
 
-此脚本只启动服务进程，没有停止训练或操作 Pod 的命令。当前两 Pod 正在训练，服务尚未在它们的 GPU 上启动。
+此脚本只启动服务进程，没有停止训练或操作 Pod 的命令。2026-10-26 按用户要求取消本地启动，仅完成接口测试和[训练/推理一致性审计](cogact_inference_parity_20261026.md)，未运行完整模型服务，也未占用训练 Pod 的 GPU。
 
 ## RobotControl 端配置
 
@@ -109,9 +111,11 @@ curl -X POST http://<服务 IP>:5509/api/reset
 
 ```bash
 ROBOTCONTROL_G1_ROOT=/path/to/RobotControl-G1 \
-  .venv/bin/python -m pytest -q tests/test_robotcontrol_server.py
+  OMP_NUM_THREADS=2 .venv/bin/python -m pytest -q \
+  tests/test_robotcontrol_server.py tests/test_cogact_joint.py \
+  tests/test_cogact_video.py tests/test_cogact_inference_parity.py
 ```
 
-测试包含训练状态/图像/归一化一致性、历史掩码与重置、缺字段/非法数值、单臂保持，以及使用**未修改的 RobotControl HTTP 客户端和动作解释器**通过本地 HTTP 服务收发 32 步动作。模型调用测试使用替身，以验证输入张量和关闭 RTC 的调用路径；完整 checkpoint 的 GPU 推理延迟及实机动作效果还未验证。
+测试包含训练状态/图像/归一化一致性、历史掩码与重置、缺字段/非法数值、单臂保持，以及使用**未修改的 RobotControl HTTP 客户端和动作解释器**通过本地 HTTP 服务收发 32 步动作。新增独立审计测试比较真实训练和在线推理的 attention mask（允许哪些 token 相互读取的规则），以及视觉语言条件和当前状态 token。昂贵的模型计算使用替身；完整 checkpoint 的 GPU 数值结果、推理延迟及实机动作效果还未验证。
 
 2026-10-26 已在独立代码目录以 `CUDA_VISIBLE_DEVICES=''` 执行 `--check-config`，通过当前第 80,000 步权重及全量归一化检查。数据签名为 `2320fa375ded473df404986bcb388b55d50f6e9bd9e5ce5567dce19599a95e6f`，未更改正在训练的代码目录。
