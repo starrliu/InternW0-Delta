@@ -64,6 +64,35 @@ deploy-artifacts/
     RynnBrain1.1-2B/             # 完整模型、配置和 processor 文件
 ```
 
+这些文件已在 Azure Blob 中备齐。账户为 `eaidatashare`，容器为 `v-xingyumliu`，共同 URL 前缀为 `https://eaidatashare.blob.core.windows.net/v-xingyumliu/`：
+
+| 内容 | Blob 路径（相对共同前缀） |
+|---|---|
+| 80k 策略、训练配置、全量归一化和下载清单 | `internw0-delta/serving/b200-joint-bs256-100k-20261023/step80000/` 下的 `policy.pt`、`config.yaml`、`normalization.json`、`assets_manifest.json` |
+| Wan VAE | `internw0-delta/assets/cogact-probe-20261022-v1/checkpoints/Wan-AI/Wan2.2-TI2V-5B/Wan2.2_VAE.pth` |
+| RynnBrain 全目录 | `internw0-delta/assets/cogact-probe-20261022-v1/checkpoints/RynnBrain1.1-2B/` |
+| T5 权重 | `internw0-delta/assets/text-encoder-20261023-v1/checkpoints/Wan-AI/Wan2.2-TI2V-5B/models_t5_umt5-xxl-enc-bf16.pth` |
+| T5 tokenizer 全目录 | `internw0-delta/assets/text-encoder-20261023-v1/checkpoints/Wan-AI/Wan2.1-T2V-1.3B/google/umt5-xxl/` |
+
+这是固定的 **第 80,000 步**部署版本，不会自动指向训练中的新检查点。共 16 个文件、31.07 GB（28.94 GiB）。准确文件列表及 SHA256 在 [assets_step80000.json](../deploy/robotcontrol/assets_step80000.json)。归一化必须使用上表 `serving/.../step80000/normalization.json`，早期 `assets/.../data/window_*/normalization.json` 是小样本容量测试用统计，不能用于本模型部署。
+
+安装 AzCopy 并使用有该容器读取权限的 Azure 账号登录后，在仓库根目录运行：
+
+```bash
+azcopy login
+python tools/cogact_download_serve_assets.py --output deploy-artifacts
+```
+
+若该机器已经通过 Azure CLI 的 `az login` 登录，也可以让 AzCopy 使用该登录：
+
+```bash
+AZCOPY_AUTO_LOGIN_TYPE=AZCLI python tools/cogact_download_serve_assets.py --output deploy-artifacts
+```
+
+下载工具无需模型依赖，使用 Python 标准库和外部 `azcopy`。它将 Blob 的 `policy.pt` 保存为上图的 `run/policy-step80000.pt`，自动创建编码器目录；每个文件校验大小和 SHA256 后才改为正式文件名。已有文件会校验并复用，大小或哈希不符时报错而不覆盖。`--list` 只显示计划；`--verify-only` 只检查本地文件。URL 不含访问凭证，读取需要账号本身具有权限。
+
+本次已用独立安装的 AzCopy 10.32.8 实际下载配置和统计并通过 SHA256 校验。若 Snap 版 AzCopy 的 Azure CLI 自动登录超时，可用 `--azcopy /path/to/azcopy` 指定独立安装版本。
+
 策略 `.pt` 已包含训练后的专家权重，服务不会用原始 DiT 初始化覆盖它，也不需要 DeepSpeed 优化器分片。当前已验证的 80k 独立副本及数据签名见审计报告。
 
 先进行 CPU 配置检查，再删除命令末尾的 `--check-config` 启动模型。示例将 T5 放到 CPU，降低单卡显存占用，但会占用相应主机内存：

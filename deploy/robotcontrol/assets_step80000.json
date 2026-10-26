@@ -1,0 +1,105 @@
+{
+  "schema_version": 1,
+  "base_url": "https://eaidatashare.blob.core.windows.net/v-xingyumliu",
+  "step": 80000,
+  "normalization_signature": "2320fa375ded473df404986bcb388b55d50f6e9bd9e5ce5567dce19599a95e6f",
+  "total_bytes": 31072202645,
+  "files": [
+    {
+      "blob": "internw0-delta/serving/b200-joint-bs256-100k-20261023/step80000/policy.pt",
+      "relative": "run/policy-step80000.pt",
+      "bytes": 12423419414,
+      "sha256": "55679885fd27fe0d533eb2b33724d0764694084fa1ce902eca4681a56fb4f951"
+    },
+    {
+      "blob": "internw0-delta/serving/b200-joint-bs256-100k-20261023/step80000/config.yaml",
+      "relative": "run/config.yaml",
+      "bytes": 4687,
+      "sha256": "9531480ad63afd2fd7beb31daca0ef4bfa605eaf6aa171d24e80dbbaa3e60e8d"
+    },
+    {
+      "blob": "internw0-delta/serving/b200-joint-bs256-100k-20261023/step80000/normalization.json",
+      "relative": "run/normalization.json",
+      "bytes": 3758,
+      "sha256": "d173dca6a95cf3ddc09792c1fb28ea14d92015c8041889c859415626a80ec98d"
+    },
+    {
+      "blob": "internw0-delta/assets/cogact-probe-20261022-v1/checkpoints/Wan-AI/Wan2.2-TI2V-5B/Wan2.2_VAE.pth",
+      "relative": "checkpoints/Wan-AI/Wan2.2-TI2V-5B/Wan2.2_VAE.pth",
+      "bytes": 2818839170,
+      "sha256": "20eb789667fa5e60e7516bf509512f6cb61f01b0aa0695eadaea930c13892b36"
+    },
+    {
+      "blob": "internw0-delta/assets/cogact-probe-20261022-v1/checkpoints/RynnBrain1.1-2B/model.safetensors",
+      "relative": "checkpoints/RynnBrain1.1-2B/model.safetensors",
+      "bytes": 4426558864,
+      "sha256": "2819d84441c27c18c403c1302f60ff1ba2c9cfcdc989657bf6589e8cd11a7e6d"
+    },
+    {
+      "blob": "internw0-delta/assets/cogact-probe-20261022-v1/checkpoints/RynnBrain1.1-2B/generation_config.json",
+      "relative": "checkpoints/RynnBrain1.1-2B/generation_config.json",
+      "bytes": 148,
+      "sha256": "943f9e0a394325880a8a7e38c8d2c5bc40e2bb44a9bdc689f50fc26a2212edcc"
+    },
+    {
+      "blob": "internw0-delta/assets/cogact-probe-20261022-v1/checkpoints/RynnBrain1.1-2B/tokenizer.json",
+      "relative": "checkpoints/RynnBrain1.1-2B/tokenizer.json",
+      "bytes": 19989343,
+      "sha256": "87a7830d63fcf43bf241c3c5242e96e62dd3fdc29224ca26fed8ea333db72de4"
+    },
+    {
+      "blob": "internw0-delta/assets/cogact-probe-20261022-v1/checkpoints/RynnBrain1.1-2B/processor_config.json",
+      "relative": "checkpoints/RynnBrain1.1-2B/processor_config.json",
+      "bytes": 1300,
+      "sha256": "14932921ca485d458a04dafd8069fbb0a4505622a48208d19ed247115801385b"
+    },
+    {
+      "blob": "internw0-delta/assets/cogact-probe-20261022-v1/checkpoints/RynnBrain1.1-2B/config.json",
+      "relative": "checkpoints/RynnBrain1.1-2B/config.json",
+      "bytes": 2568,
+      "sha256": "3db6717dea7333fd0a4f543e378c5e68e761c8f2907384c537bd8bbee4d18b81"
+    },
+    {
+      "blob": "internw0-delta/assets/cogact-probe-20261022-v1/checkpoints/RynnBrain1.1-2B/tokenizer_config.json",
+      "relative": "checkpoints/RynnBrain1.1-2B/tokenizer_config.json",
+      "bytes": 1139,
+      "sha256": "e98f1901ac6f0adff67b1d540bfa0c36ac1a0cf59eb72ed78146ef89aafa1182"
+    },
+    {
+      "blob": "internw0-delta/assets/cogact-probe-20261022-v1/checkpoints/RynnBrain1.1-2B/chat_template.jinja",
+      "relative": "checkpoints/RynnBrain1.1-2B/chat_template.jinja",
+      "bytes": 7755,
+      "sha256": "273d8e0e683b885071fb17e08d71e5f2a5ddfb5309756181681de4f5a1822d80"
+    },
+    {
+      "blob": "internw0-delta/assets/text-encoder-20261023-v1/checkpoints/Wan-AI/Wan2.2-TI2V-5B/models_t5_umt5-xxl-enc-bf16.pth",
+      "relative": "checkpoints/Wan-AI/Wan2.2-TI2V-5B/models_t5_umt5-xxl-enc-bf16.pth",
+      "bytes": 11361920418,
+      "sha256": "7cace0da2b446bbbbc57d031ab6cf163a3d59b366da94e5afe36745b746fd81d"
+    },
+    {
+      "blob": "internw0-delta/assets/text-encoder-20261023-v1/checkpoints/Wan-AI/Wan2.1-T2V-1.3B/google/umt5-xxl/special_tokens_map.json",
+      "relative": "checkpoints/Wan-AI/Wan2.1-T2V-1.3B/google/umt5-xxl/special_tokens_map.json",
+      "bytes": 6623,
+      "sha256": "7b8a9f5040adb67b5805abdfd42c1f8d0f3d0e711f10726580eb3789cd0ad61d"
+    },
+    {
+      "blob": "internw0-delta/assets/text-encoder-20261023-v1/checkpoints/Wan-AI/Wan2.1-T2V-1.3B/google/umt5-xxl/spiece.model",
+      "relative": "checkpoints/Wan-AI/Wan2.1-T2V-1.3B/google/umt5-xxl/spiece.model",
+      "bytes": 4548313,
+      "sha256": "e3909a67b780650b35cf529ac782ad2b6b26e6d1f849d3fbb6a872905f452458"
+    },
+    {
+      "blob": "internw0-delta/assets/text-encoder-20261023-v1/checkpoints/Wan-AI/Wan2.1-T2V-1.3B/google/umt5-xxl/tokenizer.json",
+      "relative": "checkpoints/Wan-AI/Wan2.1-T2V-1.3B/google/umt5-xxl/tokenizer.json",
+      "bytes": 16837417,
+      "sha256": "6e197b4d3dbd71da14b4eb255f4fa91c9c1f2068b20a2de2472967ca3d22602b"
+    },
+    {
+      "blob": "internw0-delta/assets/text-encoder-20261023-v1/checkpoints/Wan-AI/Wan2.1-T2V-1.3B/google/umt5-xxl/tokenizer_config.json",
+      "relative": "checkpoints/Wan-AI/Wan2.1-T2V-1.3B/google/umt5-xxl/tokenizer_config.json",
+      "bytes": 61728,
+      "sha256": "ed9a3a8b0faa71a70a32847e0435fe036e6e112d4df4edb7bb48a921e344dc05"
+    }
+  ]
+}

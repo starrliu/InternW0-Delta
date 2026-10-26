@@ -12,6 +12,7 @@ dist/
 /checkpoints/
 /runs/
 /outputs/
+/deploy-artifacts/
 /urdf/
 wandb/
 *.log
